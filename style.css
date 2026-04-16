@@ -149,27 +149,20 @@ nav {
     gap: 12px;
 }
 
-.logo-icon {
-    width: 46px;
-    height: 40px;
-    background: var(--accent);
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 16px;
-    box-shadow: 0 4px 15px var(--accent-glow);
+.logo-img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    transition: opacity 0.2s ease;
 }
 
-.logo-text {
-    font-family: var(--font-heading);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--primary);
-    text-transform: uppercase;
+.logo-img:hover {
+    opacity: 0.85;
+}
+
+.logo-img--footer {
+    height: 80px;
 }
 
 .nav-links {
