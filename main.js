@@ -424,23 +424,35 @@ if (swipeSections.length > 0) {
     }, 20000); // 20 Seconds
 }
 
-// 5. Smart Auto-Scroll (Intro Gateway)
-// After 35 seconds of being idle at the top, auto-scroll to the About section
-setTimeout(() => {
-    if (window.scrollY === 0) {
-        const aboutSection = document.getElementById('about');
-        if (aboutSection) {
-            const offset = 80;
-            const elementPosition = aboutSection.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = elementPosition - offset;
+// 5. Global Kiosk Mode (Auto-Scroll Loop)
+// Automatically cycles through all major sections every 15 seconds
+const sections = ['home', 'about', 'services', 'portfolio', 'contact'];
+let currentSectionIndex = 0;
+let autoScrollEnabled = true;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
+// Stop auto-scroll if user manually scrolls
+window.addEventListener('wheel', () => autoScrollEnabled = false, { once: true });
+window.addEventListener('touchstart', () => autoScrollEnabled = false, { once: true });
+
+setInterval(() => {
+    if (!autoScrollEnabled) return;
+
+    currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+    const targetId = sections[currentSectionIndex];
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+        const offset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
     }
-}, 35000); // 35 seconds (allows 2 hero slides to be seen)
+}, 15000); // 15 Seconds
+
 
 
 
