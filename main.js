@@ -361,3 +361,48 @@ if (csModal) {
         }
     });
 }
+
+// ===== Command Center Enhancements =====
+
+// 1. Preloader Removal
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+            // Start Hero Animations after preloader is gone
+            initHeroTyping();
+        }, 1500);
+    }
+});
+
+// 2. Hero Typing Animation
+function initHeroTyping() {
+    const heroH1 = document.querySelector('.swiper-slide-active .text-gradient');
+    if (!heroH1) return;
+    
+    // We can expand this with more complex typing logic if needed
+    // For now, let's add a pulse effect to the ticker colors
+    setInterval(() => {
+        const dots = document.querySelectorAll('.ticker-dot');
+        dots.forEach(dot => {
+            dot.style.transform = 'scale(1.2)';
+            setTimeout(() => dot.style.transform = 'scale(1)', 500);
+        });
+    }, 3000);
+}
+
+// 3. Status Ticker Dynamic Content (Optional extra polish)
+// Adding a small visual indicator for the swipeable sections on mobile
+if (window.innerWidth < 768) {
+    const swipeSections = document.querySelectorAll('.project-grid, .enterprise-services-grid');
+    swipeSections.forEach(section => {
+        const hint = document.createElement('div');
+        hint.className = 'swipe-hint';
+        hint.innerHTML = '<span>Swipe to explore →</span>';
+        hint.style.cssText = 'text-align: center; font-size: 12px; color: var(--tech-accent); margin-top: -20px; margin-bottom: 20px; font-weight: 600; opacity: 0.7;';
+        section.parentNode.insertBefore(hint, section.nextSibling);
+    });
+}
+

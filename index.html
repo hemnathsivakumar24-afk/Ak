@@ -14,7 +14,31 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="shadow-mode">
+    <!-- Branded Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <img src="assets/logo.png" alt="AK Robotic" class="preloader-logo">
+            <div class="preloader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Live Industrial Ticker -->
+    <div class="status-ticker">
+        <div class="ticker-scroll" id="ticker-content">
+            <span class="ticker-item"><span class="ticker-dot green"></span> SYSTEM 4.0: OPERATIONAL</span>
+            <span class="ticker-item"><span class="ticker-dot cyan"></span> PRECISION INDEX: 99.8%</span>
+            <span class="ticker-item"><span class="ticker-dot green"></span> KUKA ARM 04: ACTIVE</span>
+            <span class="ticker-item"><span class="ticker-dot amber"></span> NEW UPDATE: FIRMWARE DEPLOYED</span>
+            <span class="ticker-item"><span class="ticker-dot cyan"></span> CAPACITY: OPTIMIZED</span>
+            <span class="ticker-item"><span class="ticker-dot green"></span> FANUC LOGIC: SECURE</span>
+            <!-- Duplicated for seamless loop -->
+            <span class="ticker-item"><span class="ticker-dot green"></span> SYSTEM 4.0: OPERATIONAL</span>
+            <span class="ticker-item"><span class="ticker-dot cyan"></span> PRECISION INDEX: 99.8%</span>
+            <span class="ticker-item"><span class="ticker-dot green"></span> KUKA ARM 04: ACTIVE</span>
+        </div>
+    </div>
+
     <header id="header">
         <nav class="container">
             <div class="logo">
