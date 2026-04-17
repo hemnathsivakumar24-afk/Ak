@@ -712,9 +712,10 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     min-width: 160px;
     height: 70px;
-    padding: 15px 30px;
+    padding: 15px 25px;
     background: var(--white);
     border-radius: var(--radius-sm);
     border: 1px solid rgba(0,0,0,0.06);
@@ -730,27 +731,24 @@ footer {
 }
 
 .partner-logo img {
-    max-height: 40px;
-    width: auto;
-    max-width: 120px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.6;
-    transition: all 0.4s ease;
+    border-radius: 6px;
+    flex-shrink: 0;
 }
 
 .partner-logo:hover img {
-    filter: grayscale(0%);
-    opacity: 1;
+    transform: scale(1.1);
 }
 
 .partner-logo span {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: 18px;
-    letter-spacing: 1px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
     white-space: nowrap;
-    opacity: 0.7;
+    display: block;
     transition: opacity 0.3s ease;
 }
 
