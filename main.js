@@ -395,14 +395,36 @@ function initHeroTyping() {
 
 // 3. Status Ticker Dynamic Content (Optional extra polish)
 // Adding a small visual indicator for the swipeable sections on mobile
+const swipeSections = document.querySelectorAll('.project-grid, .enterprise-services-grid');
 if (window.innerWidth < 768) {
-    const swipeSections = document.querySelectorAll('.project-grid, .enterprise-services-grid');
     swipeSections.forEach(section => {
         const hint = document.createElement('div');
         hint.className = 'swipe-hint';
         hint.innerHTML = '<span>Swipe to explore →</span>';
-        hint.style.cssText = 'text-align: center; font-size: 12px; color: var(--tech-accent); margin-top: -20px; margin-bottom: 20px; font-weight: 600; opacity: 0.7;';
+        hint.style.cssText = 'text-align: center; font-size: 12px; color: var(--accent); margin-top: -20px; margin-bottom: 20px; font-weight: 600; opacity: 0.7; transition: opacity 0.5s;';
         section.parentNode.insertBefore(hint, section.nextSibling);
     });
 }
+
+// 4. Auto-Swipe Logic (Every 20 seconds)
+if (swipeSections.length > 0) {
+    setInterval(() => {
+        swipeSections.forEach(section => {
+            if (!section) return;
+            
+            const cardWidth = section.querySelector('.enterprise-card, .project-card')?.offsetWidth + 20 || 300;
+            const currentScroll = section.scrollLeft;
+            const maxScroll = section.scrollWidth - section.clientWidth;
+            
+            if (currentScroll >= maxScroll - 10) {
+                // Return to start
+                section.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                // Move to next card
+                section.scrollTo({ left: currentScroll + cardWidth, behavior: 'smooth' });
+            }
+        });
+    }, 20000); // 20 Seconds
+}
+
 
