@@ -79,6 +79,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             // Close mobile menu if open
             if (navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
+                if (mobileMenuBtn) mobileMenuBtn.classList.remove('open');
             }
         }
     });
