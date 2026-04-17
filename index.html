@@ -117,47 +117,121 @@
             </div>
         </section>
 
-        <!-- Services Section (Bento Grid) -->
-        <section id="services" class="services reveal">
+        <!-- Services Section (Detailed Grid) -->
+        <section id="services" class="services reveal" style="padding: 100px 0; background-color: var(--surface);">
             <div class="container">
                 <div class="section-header text-center">
                     <span class="subtitle">What We Do</span>
                     <h2>Comprehensive Industrial Solutions</h2>
+                    <p style="margin-top: 15px; color: var(--text-muted); max-width: 700px; margin-inline: auto;">From robotics programming to high-precision manufacturing and industrial panel design, our skilled professionals deliver cutting-edge automation technology tailored to your specific needs.</p>
                 </div>
-                <div class="bento-grid">
-                    <div class="bento-item main-service">
-                        <div class="bento-inner">
-                            <i class="icon-cnc"></i>
-                            <h3>CNC & Rapid Prototyping</h3>
-                            <p>State-of-the-art CNC machining and rapid prototyping solutions for complex industrial needs.</p>
-                            <img src="cnc-service.png" alt="CNC Machining">
-                        </div>
+                
+                <div class="services-advanced-grid">
+                    <!-- CNC (Kept as requested) -->
+                    <div class="service-adv-card premium-card">
+                        <div class="sac-icon">⚙️</div>
+                        <h3>CNC & Rapid Prototyping</h3>
+                        <p>State-of-the-art CNC machining and rapid prototyping solutions for complex industrial needs.</p>
+                        <button class="btn-book-service" data-service="cnc">Book Appointment</button>
                     </div>
-                    <div class="bento-item highlight-service">
-                        <div class="bento-inner">
-                            <i class="icon-robot"></i>
-                            <h3>Robotic Integration</h3>
-                            <p>Custom robotics design and integration for manufacturing automation.</p>
-                        </div>
+
+                    <!-- New Services -->
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🤖</div>
+                        <h3>Robotic Welding Solutions</h3>
+                        <p>Advanced robotic welding cells for structural integrity and high-throughput production.</p>
+                        <button class="btn-book-service" data-service="robotic-welding">Book Appointment</button>
                     </div>
-                    <div class="bento-item">
-                        <div class="bento-inner">
-                            <h3>Construction Machines</h3>
-                            <p>Retailer of high-grade construction equipment and materials.</p>
-                        </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">💻</div>
+                        <h3>PLC Programming</h3>
+                        <p>Custom programmable logic controller integration for seamless industrial automation.</p>
+                        <button class="btn-book-service" data-service="plc">Book Appointment</button>
                     </div>
-                    <div class="bento-item dark-bg">
-                        <div class="bento-inner">
-                            <h3>Fabrication Services</h3>
-                            <p>Precision metal fabrication and industrial printing services.</p>
-                            <img src="fabrication.png" alt="Metal Fabrication" style="margin-top: auto; border-radius: var(--radius-md); height: 150px; object-fit: cover;">
-                        </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🤝</div>
+                        <h3>Cobot Integration</h3>
+                        <p>Safe, collaborative robot implementations designed to work alongside human operators.</p>
+                        <button class="btn-book-service" data-service="cobot">Book Appointment</button>
                     </div>
-                    <div class="bento-item">
-                        <div class="bento-inner">
-                            <h3>Project Consulting</h3>
-                            <p>Expert guidance on automation workflows and industrial setup.</p>
-                        </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🏭</div>
+                        <h3>Industrial Automation</h3>
+                        <p>End-to-end industrial automation projects tailored to maximize efficiency and ROI.</p>
+                        <button class="btn-book-service" data-service="automation-projects">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card outline-card">
+                        <div class="sac-icon">🧑‍💻</div>
+                        <h3>Robot Programming Support</h3>
+                        <p>Expert programming support for top industrial robots including debugging and optimization.</p>
+                        <button class="btn-book-service" data-service="programming-support">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🗜️</div>
+                        <h3>Jigs and Fixtures</h3>
+                        <p>Custom-designed jigs and fixtures ensuring accuracy, repeatability, and efficiency in manufacturing.</p>
+                        <button class="btn-book-service" data-service="jigs-fixtures">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🛠️</div>
+                        <h3>Robot Spares & Service (AMC)</h3>
+                        <p>Annual Maintenance Contracts (AMC) and reliable spare parts for uninterrupted automated operations.</p>
+                        <button class="btn-book-service" data-service="amc">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">📐</div>
+                        <h3>Welding Fixtures Design</h3>
+                        <p>Conceptualization, design, and manufacturing of precision welding fixtures.</p>
+                        <button class="btn-book-service" data-service="welding-fixtures">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">⚡</div>
+                        <h3>Electrical Panel</h3>
+                        <p>Design, assembly, and testing of industrial electrical control panels tailored for heavy machinery.</p>
+                        <button class="btn-book-service" data-service="electrical-panel">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">📦</div>
+                        <h3>Welding Equipment's Supply</h3>
+                        <p>Providing top-tier industrial welding machinery and setups for various applications.</p>
+                        <button class="btn-book-service" data-service="welding-supply">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🔥</div>
+                        <h3>Welding Spares & Consumables</h3>
+                        <p>Reliable supply chain for high-quality welding consumables, tips, wires, and safety gear.</p>
+                        <button class="btn-book-service" data-service="welding-consumables">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card highlight-card">
+                        <div class="sac-icon">🔬</div>
+                        <h3>Special Purpose Machines</h3>
+                        <p>Custom builds including Leak Test, MIG Welding, and Spot Welding machines designed for specific tasks.</p>
+                        <button class="btn-book-service" data-service="spm">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🖥️</div>
+                        <h3>Robot Offline Simulation</h3>
+                        <p>Precise cell layout and cycle time simulations before physical implementation to guarantee success.</p>
+                        <button class="btn-book-service" data-service="simulation">Book Appointment</button>
+                    </div>
+
+                    <div class="service-adv-card">
+                        <div class="sac-icon">🎓</div>
+                        <h3>Robot Training</h3>
+                        <p>Comprehensive training programs for operators and engineers to confidently manage robotic cells.</p>
+                        <button class="btn-book-service" data-service="training">Book Appointment</button>
                     </div>
                 </div>
             </div>
@@ -173,28 +247,28 @@
                 </div>
                 <div class="project-grid">
                     <div class="project-card">
-                        <img src="warehouse.png" class="project-img" alt="Warehouse Automation">
+                        <img src="assets/warehouse.png" class="project-img" alt="Warehouse Automation">
                         <div class="project-overlay">
                             <h3>Smart Warehouse System</h3>
                             <p>Our commitment to efficiency ensured a 30% uptime increase for this trusted logistics partner.</p>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="cnc-advanced.png" class="project-img" alt="CNC Component">
+                        <img src="assets/cnc-advanced.png" class="project-img" alt="CNC Component">
                         <div class="project-overlay">
                             <h3>Precision CNC Parts</h3>
                             <p>Trusted by aerospace leaders for high-precision components delivered with absolute dedication.</p>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="fabrication.png" class="project-img" alt="Custom Fabrication">
+                        <img src="assets/fabrication.png" class="project-img" alt="Custom Fabrication">
                         <div class="project-overlay">
                             <h3>Custom Heavy Fabrication</h3>
                             <p>Built on a foundation of trust: delivering structural integrity for complex industrial frameworks.</p>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="cnc-service.png" class="project-img" alt="Robotic Lab">
+                        <img src="assets/cnc-service.png" class="project-img" alt="Robotic Lab">
                         <div class="project-overlay">
                             <h3>Robotic Cell Implementation</h3>
                             <p>Advanced assembly line automation backed by our commitment to long-term reliability.</p>
@@ -296,6 +370,75 @@
             <p>&copy; 2026 AK Robotic. All Rights Reserved.</p>
         </div>
     </footer>
+
+    <!-- Floating Book Appointment Button -->
+    <button id="floating-book-btn" class="floating-btn">
+        <span class="floating-icon">📅</span> Book Appt
+    </button>
+
+    <!-- Appointment Booking Modal -->
+    <dialog id="booking-modal" class="booking-dialog">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3>Schedule an Appointment</h3>
+                <p>Select a service and time suitable for you.</p>
+            </div>
+            <form id="booking-form" class="modern-form">
+                <div class="form-group">
+                    <label for="book-service">Select Service</label>
+                    <select id="book-service" required>
+                        <option value="" disabled selected>-- Choose a Service --</option>
+                        <option value="cnc">CNC & Rapid Prototyping</option>
+                        <option value="robotic-welding">Robotic Welding Solutions</option>
+                        <option value="plc">PLC Programming</option>
+                        <option value="cobot">Cobot Integration</option>
+                        <option value="automation-projects">Industrial Automation</option>
+                        <option value="programming-support">Robot Programming Support</option>
+                        <option value="jigs-fixtures">Jigs and Fixtures</option>
+                        <option value="amc">Robot Spares & Service (AMC)</option>
+                        <option value="welding-fixtures">Welding Fixtures Design</option>
+                        <option value="electrical-panel">Electrical Panel</option>
+                        <option value="welding-supply">Welding Equipment's Supply</option>
+                        <option value="welding-consumables">Welding Spares & Consumables</option>
+                        <option value="spm">Special Purpose Machines</option>
+                        <option value="simulation">Robot Offline Simulation</option>
+                        <option value="training">Robot Training</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-date">Preferred Date</label>
+                        <input type="date" id="book-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-time">Preferred Time</label>
+                        <input type="time" id="book-time" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-name">Your Name</label>
+                        <input type="text" id="book-name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-contact">Phone Number</label>
+                        <input type="tel" id="book-contact" placeholder="+91 XXXXX XXXXX" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full">Confirm Booking</button>
+            </form>
+            <div id="booking-success" class="booking-success hidden">
+                <div class="success-icon">✅</div>
+                <h4>Appointment Confirmed!</h4>
+                <p>We have received your requested time and service. Our team will contact you shortly to confirm the details.</p>
+                <button class="btn-secondary close-success-btn">Done</button>
+            </div>
+        </div>
+    </dialog>
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

@@ -105,3 +105,98 @@ if (contactForm) {
         }, 1500);
     });
 }
+
+// Appointment Booking Logic
+const floatingBookBtn = document.getElementById('floating-book-btn');
+const bookingModal = document.getElementById('booking-modal');
+const closeModalBtn = document.querySelector('.close-modal');
+const closeSuccessBtn = document.querySelector('.close-success-btn');
+const bookingForm = document.getElementById('booking-form');
+const bookingSuccess = document.getElementById('booking-success');
+const serviceSelect = document.getElementById('book-service');
+const serviceButtons = document.querySelectorAll('.btn-book-service');
+
+// Open modal function
+function openModal(serviceValue = null) {
+    if (bookingModal) {
+        // Reset view state
+        bookingForm.classList.remove('hidden');
+        bookingSuccess.classList.add('hidden');
+        bookingForm.reset();
+        
+        // Auto-select service if passed
+        if (serviceValue) {
+            const optionExists = Array.from(serviceSelect.options).some(opt => opt.value === serviceValue);
+            if (optionExists) {
+                serviceSelect.value = serviceValue;
+            }
+        }
+        
+        bookingModal.showModal();
+        document.body.style.overflow = 'hidden'; // prevent bg scroll
+    }
+}
+
+// Close modal function
+function closeModal() {
+    if (bookingModal) {
+        bookingModal.close();
+        document.body.style.overflow = ''; // restore bg scroll
+    }
+}
+
+// Event Listeners for opening modal
+if (floatingBookBtn) {
+    floatingBookBtn.addEventListener('click', () => openModal());
+}
+
+serviceButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const serviceId = e.target.getAttribute('data-service');
+        openModal(serviceId);
+    });
+});
+
+// Event Listeners for closing modal
+if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', closeModal);
+}
+
+if (closeSuccessBtn) {
+    closeSuccessBtn.addEventListener('click', closeModal);
+}
+
+if (bookingModal) {
+    // Close when clicking outside of modal content
+    bookingModal.addEventListener('click', (e) => {
+        const dialogDimensions = bookingModal.getBoundingClientRect();
+        if (
+            e.clientX < dialogDimensions.left ||
+            e.clientX > dialogDimensions.right ||
+            e.clientY < dialogDimensions.top ||
+            e.clientY > dialogDimensions.bottom
+        ) {
+            closeModal();
+        }
+    });
+}
+
+// Appointment Form Submission
+if (bookingForm) {
+    bookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const submitBtn = bookingForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        
+        submitBtn.innerText = "Confirming...";
+        submitBtn.disabled = true;
+        
+        // Simulate network request
+        setTimeout(() => {
+            bookingForm.classList.add('hidden');
+            bookingSuccess.classList.remove('hidden');
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }, 1200);
+    });
+}
