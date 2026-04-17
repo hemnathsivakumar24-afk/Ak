@@ -398,6 +398,68 @@ nav {
     opacity: 0.3;
 }
 
+/* Scroll Indicator (Mobile Only) */
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: none; /* Desktop hidden */
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .scroll-indicator {
+        display: flex;
+    }
+}
+
+.mouse-scroll {
+    width: 20px;
+    height: 35px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    position: relative;
+}
+
+.mouse-wheel {
+    width: 2px;
+    height: 6px;
+    background: #fff;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    animation: scrollMove 2s infinite;
+}
+
+.chevron-down {
+    width: 15px;
+    height: 15px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(45deg);
+    animation: bounce 2s infinite;
+}
+
+@keyframes scrollMove {
+    0% { top: 6px; opacity: 1; }
+    100% { top: 20px; opacity: 0; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+    40% { transform: translateY(-10px) rotate(45deg); }
+    60% { transform: translateY(-5px) rotate(45deg); }
+}
+
+
 .slide-overlay {
     position: absolute;
     top: 0;
