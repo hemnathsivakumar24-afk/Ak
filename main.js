@@ -429,10 +429,11 @@ if (typeof swipeSections !== 'undefined' && swipeSections.length > 0) {
     }, 20000); // 20 Seconds
 }
 
-// 5. Global Kiosk Mode (Auto-Scroll Loop) - Smart Idle Detection
+// 5. Global Kiosk Mode (Auto-Scroll Loop) - 10s Smart Idle Detection
 const sections = ['home', 'about', 'services', 'portfolio', 'contact'];
 let currentSectionIndex = 0;
 let lastInteractionTime = Date.now();
+let isUserTouching = false;
 
 // Reset idle timer on any user interaction
 const resetIdleTimer = () => {
@@ -440,14 +441,17 @@ const resetIdleTimer = () => {
 };
 
 window.addEventListener('wheel', resetIdleTimer);
-window.addEventListener('touchstart', resetIdleTimer);
+window.addEventListener('touchstart', () => { isUserTouching = true; resetIdleTimer(); });
+window.addEventListener('touchmove', resetIdleTimer);
+window.addEventListener('touchend', () => { isUserTouching = false; resetIdleTimer(); });
 window.addEventListener('scroll', resetIdleTimer);
 window.addEventListener('click', resetIdleTimer);
 
 setInterval(() => {
-    const isIdle = (Date.now() - lastInteractionTime) > 15000; // 15 seconds of no activity
+    // Only scroll if idle for 10s AND user is not currently touching the screen
+    const isIdle = (Date.now() - lastInteractionTime) > 10000; 
     
-    if (isIdle) {
+    if (isIdle && !isUserTouching) {
         currentSectionIndex = (currentSectionIndex + 1) % sections.length;
         const targetId = sections[currentSectionIndex];
         const targetElement = document.getElementById(targetId);
@@ -463,4 +467,5 @@ setInterval(() => {
             });
         }
     }
-}, 15000); // Check every 15 seconds
+}, 10000); // Updated to 10 Seconds
+
