@@ -651,6 +651,116 @@ footer {
     transform: translateY(0);
 }
 
+/* ===== Solution Partners Infinite Marquee ===== */
+.partners-section {
+    padding: 80px 0 60px;
+    background: var(--bg-subtle);
+    overflow: hidden;
+    position: relative;
+}
+
+.marquee-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 30px 0;
+}
+
+/* Fade edges for premium infinite effect */
+.marquee-wrapper::before,
+.marquee-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 120px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.marquee-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg-subtle), transparent);
+}
+
+.marquee-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg-subtle), transparent);
+}
+
+.marquee-track {
+    display: flex;
+    gap: 60px;
+    width: max-content;
+    animation: marquee-scroll 35s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.partner-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+    height: 70px;
+    padding: 15px 30px;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.partner-logo:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.partner-logo span {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.partner-logo:hover span {
+    opacity: 1;
+}
+
+/* Individual brand colors */
+.brand-abb { color: #FF000F; }
+.brand-yaskawa { color: #0033A0; }
+.brand-panasonic { color: #003DA5; }
+.brand-kuka { color: #F7700D; }
+.brand-fanuc { color: #FFD100; text-shadow: 0 0 1px rgba(0,0,0,0.3); }
+.brand-fronius { color: #E30613; }
+.brand-kemppi { color: #003882; }
+.brand-megmeet { color: #0072CE; }
+.brand-delta { color: #76232F; }
+.brand-omron { color: #003DA5; }
+.brand-siemens { color: #009999; }
+.brand-salzer { color: #1B3A6B; }
+.brand-schneider { color: #3DCD58; }
+.brand-bch { color: #C8102E; }
+.brand-kml { color: #00529B; }
+.brand-ewm { color: #E30613; }
+
 /* Mobile Hamburger Button - Hidden on Desktop */
 .mobile-menu-btn {
     display: none;
