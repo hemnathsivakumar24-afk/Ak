@@ -336,8 +336,8 @@ nav {
 /* Advanced Hero Slider */
 .hero {
     padding: 0;
-    height: 85vh; /* Shorter for better content discovery */
-    min-height: 600px;
+    height: 100vh; /* Full screen impact */
+    width: 100%;
     position: relative;
     overflow: hidden;
 }
@@ -367,13 +367,15 @@ nav {
     height: 100%;
     object-fit: cover;
     filter: brightness(0.85);
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
 }
 
 .hero-video {
-    position: absolute;
-    top: 0;
-    left: 0;
     z-index: 1;
     pointer-events: none;
 }
