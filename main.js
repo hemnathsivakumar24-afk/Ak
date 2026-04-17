@@ -280,3 +280,83 @@ if (bookingForm) {
         });
     });
 }
+
+// ===== Case Study Lightbox =====
+const csModal = document.getElementById('case-study-modal');
+const csCloseBtn = document.querySelector('.case-close-btn');
+
+// Animated counter function
+function animateCounter(element, target, suffix, duration = 1500) {
+    const isDecimal = String(target).includes('.');
+    let start = 0;
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = eased * target;
+        
+        element.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            element.textContent = isDecimal ? target.toFixed(1) : target;
+        }
+    }
+    requestAnimationFrame(update);
+}
+
+// Click handler for project cards
+document.querySelectorAll('.project-card[data-title]').forEach(card => {
+    card.addEventListener('click', () => {
+        // Populate modal
+        document.getElementById('cs-image').src = card.dataset.img;
+        document.getElementById('cs-tag').textContent = card.dataset.tag;
+        document.getElementById('cs-title').textContent = card.dataset.title;
+        document.getElementById('cs-desc').textContent = card.dataset.desc;
+        
+        // Set suffixes and labels
+        document.getElementById('cs-suffix1').textContent = card.dataset.suffix1;
+        document.getElementById('cs-suffix2').textContent = card.dataset.suffix2;
+        document.getElementById('cs-suffix3').textContent = card.dataset.suffix3;
+        document.getElementById('cs-label1').textContent = card.dataset.label1;
+        document.getElementById('cs-label2').textContent = card.dataset.label2;
+        document.getElementById('cs-label3').textContent = card.dataset.label3;
+        
+        // Reset counters to 0
+        document.getElementById('cs-stat1').textContent = '0';
+        document.getElementById('cs-stat2').textContent = '0';
+        document.getElementById('cs-stat3').textContent = '0';
+        
+        // Open modal
+        csModal.showModal();
+        document.body.style.overflow = 'hidden';
+        
+        // Start counter animations after a tiny delay for visual effect
+        setTimeout(() => {
+            animateCounter(document.getElementById('cs-stat1'), parseFloat(card.dataset.stat1), card.dataset.suffix1);
+            animateCounter(document.getElementById('cs-stat2'), parseFloat(card.dataset.stat2), card.dataset.suffix2, 1800);
+            animateCounter(document.getElementById('cs-stat3'), parseFloat(card.dataset.stat3), card.dataset.suffix3, 2000);
+        }, 300);
+    });
+});
+
+// Close handlers
+if (csCloseBtn) {
+    csCloseBtn.addEventListener('click', () => {
+        csModal.close();
+        document.body.style.overflow = '';
+    });
+}
+
+if (csModal) {
+    csModal.addEventListener('click', (e) => {
+        if (e.target === csModal) {
+            csModal.close();
+            document.body.style.overflow = '';
+        }
+    });
+}

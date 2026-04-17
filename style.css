@@ -586,6 +586,143 @@ nav {
     margin: 0;
 }
 
+/* Case Study Lightbox Modal */
+.case-study-dialog {
+    margin: auto;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    max-width: 950px;
+    width: 94%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.case-study-dialog::backdrop {
+    background: rgba(10, 15, 30, 0.75);
+    backdrop-filter: blur(12px);
+}
+
+.case-study-content {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-height: 85vh;
+}
+
+.case-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    font-size: 28px;
+    color: var(--white);
+    cursor: pointer;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.case-close-btn:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.case-study-image-wrap {
+    overflow: hidden;
+}
+
+.case-study-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 400px;
+}
+
+.case-study-body {
+    padding: 40px 35px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.case-study-body h2 {
+    font-size: 26px;
+    color: var(--primary);
+    line-height: 1.3;
+}
+
+.cs-description {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-muted);
+}
+
+.cs-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 10px 0;
+}
+
+.cs-stat {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-sm);
+    padding: 20px 15px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.cs-stat-number {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.cs-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cs-cta {
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px;
+    padding: 14px 28px;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .case-study-content {
+        grid-template-columns: 1fr;
+    }
+    .case-study-image-wrap img {
+        min-height: 220px;
+        max-height: 250px;
+    }
+    .cs-stats-row {
+        grid-template-columns: 1fr;
+    }
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Contact Section */
 .contact {
     padding: 120px 0;
