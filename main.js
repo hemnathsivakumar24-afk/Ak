@@ -6,7 +6,7 @@ const swiper = new Swiper('.mySwiper', {
         crossFade: true
     },
     autoplay: {
-        delay: 5000,
+        delay: 20000, // Updated to 20 seconds per user request
         disableOnInteraction: false,
     },
     pagination: {
@@ -373,7 +373,7 @@ window.addEventListener('load', () => {
             preloader.style.visibility = 'hidden';
             // Start Hero Animations after preloader is gone
             initHeroTyping();
-        }, 1500);
+        }, 600); // Shortened for faster loading feel
     }
 });
 
