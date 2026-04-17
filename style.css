@@ -336,8 +336,8 @@ nav {
 /* Advanced Hero Slider */
 .hero {
     padding: 0;
-    height: 100vh;
-    min-height: 700px;
+    height: 85vh; /* Shorter for better content discovery */
+    min-height: 600px;
     position: relative;
     overflow: hidden;
 }
@@ -1452,4 +1452,59 @@ footer {
 
 .hidden {
     display: none !important;
+}
+
+/* Command Center Fixes - Visibility Overrides */
+body.shadow-mode .about, 
+body.shadow-mode .partners-section,
+body.shadow-mode .enterprise-services,
+body.shadow-mode .portfolio,
+body.shadow-mode .contact,
+body.shadow-mode footer {
+    background: var(--tech-bg);
+}
+
+body.shadow-mode .nav-links {
+    background: var(--tech-surface);
+}
+
+body.shadow-mode .nav-links li {
+    border-bottom: 1px solid var(--tech-border);
+}
+
+body.shadow-mode .nav-links li a {
+    color: var(--tech-accent);
+}
+
+body.shadow-mode .mobile-menu-btn span {
+    background: var(--tech-accent);
+}
+
+body.shadow-mode .logo-img {
+    filter: brightness(1.2) contrast(1.2); /* Ensure logo pops */
+}
+
+body.shadow-mode #header.scrolled {
+    background: rgba(10, 15, 30, 0.9);
+    border-bottom: 1px solid var(--tech-border);
+}
+
+body.shadow-mode .section-header h2 {
+    color: var(--primary);
+}
+
+body.shadow-mode .enterprise-card h3,
+body.shadow-mode .project-card h3 {
+    color: var(--tech-accent);
+}
+
+body.shadow-mode .enterprise-card p,
+body.shadow-mode .project-card p {
+    color: #94A3B8;
+}
+
+body.shadow-mode .badge {
+    color: var(--tech-accent);
+    border-color: var(--tech-accent);
+    background: rgba(0, 229, 255, 0.05);
 }
