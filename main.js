@@ -360,18 +360,24 @@ if (csModal) {
 
 // ===== Command Center Enhancements =====
 
-// 1. Preloader Removal - Optimized for Speed
-window.addEventListener('load', () => {
+// 1. Preloader Removal - Ultra Fast Strategy
+function hidePreloader() {
     const preloader = document.getElementById('preloader');
-    if (preloader) {
-        // Fast fade out
+    if (preloader && preloader.style.opacity !== '0') {
         preloader.style.opacity = '0';
         setTimeout(() => {
             preloader.style.visibility = 'hidden';
             initHeroTyping();
-        }, 300); // 0.3s instead of 1.5s
+        }, 300);
     }
-});
+}
+
+// Hide when DOM is ready (don't wait for images)
+window.addEventListener('DOMContentLoaded', hidePreloader);
+
+// Fail-safe: Always hide after 2 seconds max
+setTimeout(hidePreloader, 2000);
+
 
 // 2. Hero Typing Animation
 function initHeroTyping() {
