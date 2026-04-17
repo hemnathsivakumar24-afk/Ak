@@ -117,121 +117,168 @@
             </div>
         </section>
 
-        <!-- Services Section (Detailed Grid) -->
-        <section id="services" class="services reveal" style="padding: 100px 0; background-color: var(--surface);">
+        <!-- Enterprise Services Section -->
+        <section id="services" class="services reveal" style="padding: 120px 0; background-color: var(--white);">
             <div class="container">
-                <div class="section-header text-center">
-                    <span class="subtitle">What We Do</span>
-                    <h2>Comprehensive Industrial Solutions</h2>
-                    <p style="margin-top: 15px; color: var(--text-muted); max-width: 700px; margin-inline: auto;">From robotics programming to high-precision manufacturing and industrial panel design, our skilled professionals deliver cutting-edge automation technology tailored to your specific needs.</p>
+                <div class="section-header text-center" style="margin-bottom: 80px;">
+                    <span class="subtitle" style="color: var(--text-muted); font-weight: 700; letter-spacing: 3px;">OUR EXPERTISE</span>
+                    <h2 style="font-size: 48px; color: var(--primary);">Advanced Automation Capabilities</h2>
+                    <div style="width: 60px; height: 3px; background: var(--accent); margin: 30px auto;"></div>
                 </div>
                 
-                <div class="services-advanced-grid">
-                    <!-- CNC (Kept as requested) -->
-                    <div class="service-adv-card premium-card">
-                        <div class="sac-icon">⚙️</div>
-                        <h3>CNC & Rapid Prototyping</h3>
-                        <p>State-of-the-art CNC machining and rapid prototyping solutions for complex industrial needs.</p>
-                        <button class="btn-book-service" data-service="cnc">Book Appointment</button>
-                    </div>
-
-                    <!-- New Services -->
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🤖</div>
+                <div class="enterprise-services-grid">
+                    <div class="enterprise-card" onclick="openModal('robotic-welding')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">01</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Robotic Welding Solutions</h3>
-                        <p>Advanced robotic welding cells for structural integrity and high-throughput production.</p>
-                        <button class="btn-book-service" data-service="robotic-welding">Book Appointment</button>
+                        <p>Advanced robotic welding cells engineered for structural integrity and high-throughput industrial production.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">💻</div>
+                    <div class="enterprise-card" onclick="openModal('plc')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">02</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>PLC Programming</h3>
-                        <p>Custom programmable logic controller integration for seamless industrial automation.</p>
-                        <button class="btn-book-service" data-service="plc">Book Appointment</button>
+                        <p>Custom programmable logic controller integration for seamless and robust industrial automation control.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🤝</div>
+                    <div class="enterprise-card" onclick="openModal('cobot')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">03</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Cobot Integration</h3>
-                        <p>Safe, collaborative robot implementations designed to work alongside human operators.</p>
-                        <button class="btn-book-service" data-service="cobot">Book Appointment</button>
+                        <p>Safe, collaborative robot implementations designed to work intelligently alongside human operators.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🏭</div>
+                    <div class="enterprise-card" onclick="openModal('automation-projects')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">04</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Industrial Automation</h3>
-                        <p>End-to-end industrial automation projects tailored to maximize efficiency and ROI.</p>
-                        <button class="btn-book-service" data-service="automation-projects">Book Appointment</button>
+                        <p>End-to-end industrial automation projects tailored precisely to maximize efficiency and ROI.</p>
                     </div>
 
-                    <div class="service-adv-card outline-card">
-                        <div class="sac-icon">🧑‍💻</div>
+                    <div class="enterprise-card" onclick="openModal('programming-support')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">05</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Robot Programming Support</h3>
-                        <p>Expert programming support for top industrial robots including debugging and optimization.</p>
-                        <button class="btn-book-service" data-service="programming-support">Book Appointment</button>
+                        <p>Expert-level codebase management for top industrial robots, including advanced debugging and optimization.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🗜️</div>
+                    <div class="enterprise-card" onclick="openModal('jigs-fixtures')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">06</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Jigs and Fixtures</h3>
-                        <p>Custom-designed jigs and fixtures ensuring accuracy, repeatability, and efficiency in manufacturing.</p>
-                        <button class="btn-book-service" data-service="jigs-fixtures">Book Appointment</button>
+                        <p>Custom-engineered jigs and fixtures guaranteeing accuracy, repeatability, and efficiency in manufacturing.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🛠️</div>
+                    <div class="enterprise-card" onclick="openModal('amc')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">07</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Robot Spares & Service (AMC)</h3>
-                        <p>Annual Maintenance Contracts (AMC) and reliable spare parts for uninterrupted automated operations.</p>
-                        <button class="btn-book-service" data-service="amc">Book Appointment</button>
+                        <p>Annual Maintenance Contracts (AMC) and certified spare parts for uninterrupted automated operations.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">📐</div>
+                    <div class="enterprise-card" onclick="openModal('welding-fixtures')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">08</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Welding Fixtures Design</h3>
-                        <p>Conceptualization, design, and manufacturing of precision welding fixtures.</p>
-                        <button class="btn-book-service" data-service="welding-fixtures">Book Appointment</button>
+                        <p>Conceptualization, structural design, and precision manufacturing of intricate welding fixtures.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">⚡</div>
+                    <div class="enterprise-card" onclick="openModal('electrical-panel')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">09</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Electrical Panel</h3>
-                        <p>Design, assembly, and testing of industrial electrical control panels tailored for heavy machinery.</p>
-                        <button class="btn-book-service" data-service="electrical-panel">Book Appointment</button>
+                        <p>Design, assembly, and rigorous testing of industrial electrical control panels built for heavy machinery.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">📦</div>
+                    <div class="enterprise-card" onclick="openModal('welding-supply')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">10</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Welding Equipment's Supply</h3>
-                        <p>Providing top-tier industrial welding machinery and setups for various applications.</p>
-                        <button class="btn-book-service" data-service="welding-supply">Book Appointment</button>
+                        <p>Procurement and supply of top-tier industrial welding machinery engineered for robust applications.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🔥</div>
+                    <div class="enterprise-card" onclick="openModal('welding-consumables')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">11</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Welding Spares & Consumables</h3>
-                        <p>Reliable supply chain for high-quality welding consumables, tips, wires, and safety gear.</p>
-                        <button class="btn-book-service" data-service="welding-consumables">Book Appointment</button>
+                        <p>Reliable supply chain delivery for high-quality welding consumables, industrial tips, wires, and safety gear.</p>
                     </div>
 
-                    <div class="service-adv-card highlight-card">
-                        <div class="sac-icon">🔬</div>
+                    <div class="enterprise-card" onclick="openModal('spm')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">12</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Special Purpose Machines</h3>
-                        <p>Custom builds including Leak Test, MIG Welding, and Spot Welding machines designed for specific tasks.</p>
-                        <button class="btn-book-service" data-service="spm">Book Appointment</button>
+                        <p>Custom build solutions including Leak Test, MIG Welding, and Spot Welding machines designed to spec.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🖥️</div>
+                    <div class="enterprise-card" onclick="openModal('simulation')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">13</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Robot Offline Simulation</h3>
-                        <p>Precise cell layout and cycle time simulations before physical implementation to guarantee success.</p>
-                        <button class="btn-book-service" data-service="simulation">Book Appointment</button>
+                        <p>Precise cell layout rendering and cycle time simulations guaranteeing operational success prior to build.</p>
                     </div>
 
-                    <div class="service-adv-card">
-                        <div class="sac-icon">🎓</div>
+                    <div class="enterprise-card" onclick="openModal('training')">
+                        <div class="ent-card-top">
+                            <span class="ent-number">14</span>
+                            <div class="ent-arrow-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
                         <h3>Robot Training</h3>
-                        <p>Comprehensive training programs for operators and engineers to confidently manage robotic cells.</p>
-                        <button class="btn-book-service" data-service="training">Book Appointment</button>
+                        <p>Exclusive, comprehensive training programs designed to empower engineers to confidently manage robotic cells.</p>
                     </div>
                 </div>
             </div>
@@ -389,7 +436,6 @@
                     <label for="book-service">Select Service</label>
                     <select id="book-service" required>
                         <option value="" disabled selected>-- Choose a Service --</option>
-                        <option value="cnc">CNC & Rapid Prototyping</option>
                         <option value="robotic-welding">Robotic Welding Solutions</option>
                         <option value="plc">PLC Programming</option>
                         <option value="cobot">Cobot Integration</option>
