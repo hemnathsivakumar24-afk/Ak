@@ -409,8 +409,7 @@ if (window.innerWidth < 768) {
 }
 
 // 4. Auto-Swipe Logic (Every 20 seconds) - Projects & Services
-const swipeSections = document.querySelectorAll('.project-grid, .enterprise-services-grid');
-if (swipeSections.length > 0) {
+if (typeof swipeSections !== 'undefined' && swipeSections.length > 0) {
     setInterval(() => {
         swipeSections.forEach(section => {
             if (!section) return;
