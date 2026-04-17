@@ -391,11 +391,15 @@ nav {
     font-size: 72px;
     margin-bottom: 24px;
     line-height: 1.1;
+    color: #ffffff; /* Forced white for impact */
+    text-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .slide-content p {
     font-size: 20px;
     margin-bottom: 40px;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Projects Section */
@@ -1269,12 +1273,28 @@ footer {
     }
 
     .slide-content {
-        padding-left: 0;
+        padding: 40px 24px;
         text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        background: rgba(255,255,255,0.05); /* Very subtle backdrop */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: var(--radius-md);
+        margin: 0 20px;
+        width: calc(100% - 40px);
+    }
+    
+    .slide-content h1 {
+        font-size: 36px !important;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    
+    .slide-content p {
+        font-size: 16px !important;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
     .slide-overlay {

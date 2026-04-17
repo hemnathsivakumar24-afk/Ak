@@ -13,10 +13,6 @@ const swiper = new Swiper('.mySwiper', {
         el: '.swiper-pagination',
         clickable: true,
     },
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
 });
 
 // Scroll Reveal Animation
@@ -364,16 +360,16 @@ if (csModal) {
 
 // ===== Command Center Enhancements =====
 
-// 1. Preloader Removal
+// 1. Preloader Removal - Optimized for Speed
 window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
     if (preloader) {
+        // Fast fade out
+        preloader.style.opacity = '0';
         setTimeout(() => {
-            preloader.style.opacity = '0';
             preloader.style.visibility = 'hidden';
-            // Start Hero Animations after preloader is gone
             initHeroTyping();
-        }, 600); // Shortened for faster loading feel
+        }, 300); // 0.3s instead of 1.5s
     }
 });
 
