@@ -651,43 +651,95 @@ footer {
     transform: translateY(0);
 }
 
-/* Responsive */
+/* Mobile Hamburger Button - Hidden on Desktop */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 22px;
+    cursor: pointer;
+    z-index: 1001; /* Above mobile menu */
+}
+
+.mobile-menu-btn span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--primary);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hamburger Animation */
+.mobile-menu-btn.open span:nth-child(1) {
+    transform: translateY(9.5px) rotate(45deg);
+}
+
+.mobile-menu-btn.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-btn.open span:nth-child(3) {
+    transform: translateY(-9.5px) rotate(-45deg);
+}
+
+/* Responsive Overhauls */
 @media (max-width: 992px) {
     .hero-grid, .about-grid, .contact-grid {
         grid-template-columns: 1fr;
     }
     .hero h1 { font-size: 48px; }
     .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
         grid-template-rows: auto;
     }
-    .main-service { grid-column: span 2; grid-row: span 1; }
+    .main-service { grid-column: span 1; grid-row: span 1; }
     .footer-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .form-row { grid-template-columns: 1fr; }
-}
-/* Final Header Alignment Fix */
-header nav {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    height: 100% !important;
-}
+    /* Enable Hamburger */
+    .mobile-menu-btn {
+        display: flex;
+    }
 
-header .nav-links {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 32px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
+    /* Convert Desktop Nav to Mobile Drawer */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 75%;
+        max-width: 300px;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(15px);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        padding: 40px;
+        gap: 30px;
+        z-index: 1000;
+        margin: 0;
+    }
+    
+    .nav-links.active {
+        right: 0;
+    }
 
-header .nav-links li {
-    display: inline-block !important;
+    /* Fix Layout Grids for Mobile Forms & Displays */
+    .form-row { 
+        grid-template-columns: 1fr; 
+    }
+    
+    .enterprise-services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Appointment Booking Floating Button & Modal */
