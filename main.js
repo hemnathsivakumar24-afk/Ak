@@ -429,35 +429,38 @@ if (typeof swipeSections !== 'undefined' && swipeSections.length > 0) {
     }, 20000); // 20 Seconds
 }
 
-// 5. Global Kiosk Mode (Auto-Scroll Loop)
-// Automatically cycles through all major sections every 15 seconds
+// 5. Global Kiosk Mode (Auto-Scroll Loop) - Smart Idle Detection
 const sections = ['home', 'about', 'services', 'portfolio', 'contact'];
 let currentSectionIndex = 0;
-let autoScrollEnabled = true;
+let lastInteractionTime = Date.now();
 
-// Stop auto-scroll if user manually scrolls
-window.addEventListener('wheel', () => autoScrollEnabled = false, { once: true });
-window.addEventListener('touchstart', () => autoScrollEnabled = false, { once: true });
+// Reset idle timer on any user interaction
+const resetIdleTimer = () => {
+    lastInteractionTime = Date.now();
+};
+
+window.addEventListener('wheel', resetIdleTimer);
+window.addEventListener('touchstart', resetIdleTimer);
+window.addEventListener('scroll', resetIdleTimer);
+window.addEventListener('click', resetIdleTimer);
 
 setInterval(() => {
-    if (!autoScrollEnabled) return;
+    const isIdle = (Date.now() - lastInteractionTime) > 15000; // 15 seconds of no activity
+    
+    if (isIdle) {
+        currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+        const targetId = sections[currentSectionIndex];
+        const targetElement = document.getElementById(targetId);
 
-    currentSectionIndex = (currentSectionIndex + 1) % sections.length;
-    const targetId = sections[currentSectionIndex];
-    const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            const offset = 80;
+            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
 
-    if (targetElement) {
-        const offset = 80;
-        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - offset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-        });
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
     }
-}, 15000); // 15 Seconds
-
-
-
-
+}, 15000); // Check every 15 seconds
