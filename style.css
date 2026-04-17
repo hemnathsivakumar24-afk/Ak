@@ -383,8 +383,8 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Dark gradient to make white text and video pop */
-    background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+    /* Subtle dark overlay for readability without hiding the live action */
+    background: rgba(0,0,0,0.3);
     z-index: 2;
 }
 
@@ -1287,12 +1287,11 @@ footer {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(255,255,255,0.05); /* Very subtle backdrop */
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-radius: var(--radius-md);
-        margin: 0 20px;
-        width: calc(100% - 40px);
+        background: transparent; /* Removed blur and backdrop */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin: 0;
+        width: 100%;
     }
     
     .slide-content h1 {

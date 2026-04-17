@@ -378,6 +378,17 @@ window.addEventListener('DOMContentLoaded', hidePreloader);
 // Fail-safe: Always hide after 2 seconds max
 setTimeout(hidePreloader, 2000);
 
+// Force Play Videos on Mobile (Bypass Autoplay Blocks)
+document.addEventListener('touchstart', function() {
+    const videos = document.querySelectorAll('.hero-video');
+    videos.forEach(video => {
+        if (video.paused) {
+            video.play().catch(e => console.log("Video play pending interaction"));
+        }
+    });
+}, { once: true });
+
+
 
 // 2. Hero Typing Animation
 function initHeroTyping() {
