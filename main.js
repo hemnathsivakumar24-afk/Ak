@@ -402,7 +402,8 @@ if (window.innerWidth < 768) {
     });
 }
 
-// 4. Auto-Swipe Logic (Every 20 seconds)
+// 4. Auto-Swipe Logic (Every 20 seconds) - Projects & Services
+const swipeSections = document.querySelectorAll('.project-grid, .enterprise-services-grid');
 if (swipeSections.length > 0) {
     setInterval(() => {
         swipeSections.forEach(section => {
@@ -422,5 +423,24 @@ if (swipeSections.length > 0) {
         });
     }, 20000); // 20 Seconds
 }
+
+// 5. Smart Auto-Scroll (Intro Gateway)
+// After 35 seconds of being idle at the top, auto-scroll to the About section
+setTimeout(() => {
+    if (window.scrollY === 0) {
+        const aboutSection = document.getElementById('about');
+        if (aboutSection) {
+            const offset = 80;
+            const elementPosition = aboutSection.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+}, 35000); // 35 seconds (allows 2 hero slides to be seen)
+
 
 
