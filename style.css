@@ -150,7 +150,7 @@ nav {
 }
 
 .logo-img {
-    height: 60px;
+    height: 65px;
     width: auto;
     object-fit: contain;
     display: block;
@@ -162,7 +162,7 @@ nav {
 }
 
 .logo-img--footer {
-    height: 80px;
+    height: 85px;
 }
 
 .nav-links {
