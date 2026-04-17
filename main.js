@@ -97,12 +97,50 @@ if (contactForm) {
         btn.innerText = "Sending...";
         btn.disabled = true;
         
-        setTimeout(() => {
-            alert("Thank you! Your message has been sent to AK Robotic. We will contact you shortly.");
+        // Extract Data
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subjectNode = document.getElementById('subject');
+        const subject = subjectNode.options[subjectNode.selectedIndex].text;
+        const message = document.getElementById('message').value;
+
+        // WhatsApp Integration
+        const whatsappNumber = "917358895609";
+        const whatsappMessage = `*AK Robotic Contact Form*\n\n*Name:* ${name}\n*Email:* ${email}\n*Interest:* ${subject}\n*Message:* ${message}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+        // Email submission using FormSubmit
+        fetch("https://formsubmit.co/ajax/AKrobotic3@gmail.com", {
+            method: "POST",
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                _subject: `New Website Inquiry from ${name} (${subject})`,
+                Name: name,
+                Email: email,
+                Subject: subject,
+                Message: message,
+                _replyto: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.open(whatsappUrl, '_blank');
+            alert("Thank you! Your inquiry has been sent to AK Robotic. We will contact you shortly.");
             contactForm.reset();
             btn.innerText = originalText;
             btn.disabled = false;
-        }, 1500);
+        })
+        .catch(error => {
+            console.log("Email fallback, opening WhatsApp");
+            window.open(whatsappUrl, '_blank');
+            alert("Thank you! Your inquiry has been sent. We will contact you shortly.");
+            contactForm.reset();
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
     });
 }
 
@@ -191,12 +229,54 @@ if (bookingForm) {
         submitBtn.innerText = "Confirming...";
         submitBtn.disabled = true;
         
-        // Simulate network request
-        setTimeout(() => {
+        // Form Data Extraction
+        const serviceNode = document.getElementById('book-service');
+        const service = serviceNode.options[serviceNode.selectedIndex].text;
+        const date = document.getElementById('book-date').value;
+        const time = document.getElementById('book-time').value;
+        const name = document.getElementById('book-name').value;
+        const phone = document.getElementById('book-contact').value;
+
+        // WhatsApp Generation
+        const whatsappNumber = "917358895609";
+        const whatsappMessage = `Hello AK Robotic!\n\nI would like to book an appointment.\n*Name:* ${name}\n*Phone:* ${phone}\n*Service:* ${service}\n*Date:* ${date}\n*Time:* ${time}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+        // Email submission using FormSubmit via Fetch
+        fetch("https://formsubmit.co/ajax/AKrobotic3@gmail.com", {
+            method: "POST",
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                _subject: `New Appointment Booking from ${name}`,
+                Name: name,
+                Phone: phone,
+                Service: service,
+                Date: date,
+                Time: time,
+                _autoresponse: 'Thank you for booking an appointment with AK Robotic. We will be in touch shortly.'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Open WhatsApp immediately after triggering email
+            window.open(whatsappUrl, '_blank');
+            
+            // Show success modal
             bookingForm.classList.add('hidden');
             bookingSuccess.classList.remove('hidden');
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
-        }, 1200);
+        })
+        .catch(error => {
+            console.log("Email fallback, opening WhatsApp.");
+            window.open(whatsappUrl, '_blank');
+            bookingForm.classList.add('hidden');
+            bookingSuccess.classList.remove('hidden');
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        });
     });
 }
