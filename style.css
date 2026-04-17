@@ -416,6 +416,7 @@ nav {
 @media (max-width: 768px) {
     .scroll-indicator {
         display: flex;
+        bottom: 75px; /* Moved up to avoid pagination dots */
     }
 }
 
@@ -1363,6 +1364,10 @@ footer {
         text-align: center;
     }
 
+    .hero {
+        height: 92vh !important; /* Adjusted for better proportion and visibility */
+    }
+
     .slide-content {
         padding: 40px 24px;
         text-align: center;
@@ -1375,6 +1380,7 @@ footer {
         -webkit-backdrop-filter: none;
         margin: 0;
         width: 100%;
+        transform: translateY(-40px); /* Lifted content slightly */
     }
     
     .slide-content h1 {
