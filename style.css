@@ -729,6 +729,21 @@ footer {
     border-color: var(--accent);
 }
 
+.partner-logo img {
+    max-height: 40px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.4s ease;
+}
+
+.partner-logo:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
 .partner-logo span {
     font-family: var(--font-heading);
     font-weight: 800;
