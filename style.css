@@ -733,6 +733,212 @@ nav {
     margin: 0;
 }
 
+/* ===================================================
+   Industries Section
+   =================================================== */
+.industries-section {
+    padding: 120px 0;
+    background: var(--bg-subtle);
+    position: relative;
+    overflow: hidden;
+}
+
+.industries-section::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 112, 243, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* 2-column grid, last card spans full width */
+.industries-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+}
+
+/* Base industry card */
+.industry-card {
+    background: var(--white);
+    border: 1px solid #e8edf3;
+    border-radius: var(--radius-md);
+    padding: 40px 36px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.165, 0.84, 0.44, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.industry-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #00c6ff);
+    transition: width 0.4s ease;
+    border-radius: 0 3px 3px 0;
+}
+
+.industry-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(0, 112, 243, 0.1);
+    border-color: rgba(0, 112, 243, 0.25);
+}
+
+.industry-card:hover::after {
+    width: 100%;
+}
+
+/* Wide card — SME spans both columns */
+.industry-card--wide {
+    grid-column: 1 / -1;
+}
+
+/* Icon */
+.industry-icon-wrap {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e8edf3;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.industry-card:hover .industry-icon-wrap {
+    background: rgba(0, 112, 243, 0.06);
+    border-color: rgba(0, 112, 243, 0.2);
+}
+
+.industry-icon {
+    width: 44px;
+    height: 44px;
+}
+
+/* Content */
+.industry-content {
+    flex: 1;
+}
+
+.industry-content h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+    color: var(--primary);
+    transition: color 0.3s;
+}
+
+.industry-card:hover .industry-content h3 {
+    color: var(--accent);
+}
+
+.industry-content p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+/* Capability tags */
+.industry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.industry-tags li {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(0, 112, 243, 0.08);
+    border: 1px solid rgba(0, 112, 243, 0.15);
+    border-radius: 20px;
+    padding: 4px 14px;
+    letter-spacing: 0.3px;
+    transition: background 0.25s, color 0.25s;
+}
+
+.industry-card:hover .industry-tags li {
+    background: rgba(0, 112, 243, 0.14);
+}
+
+/* Large ghost number */
+.industry-number {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    font-family: var(--font-heading);
+    font-size: 72px;
+    font-weight: 700;
+    color: rgba(0, 112, 243, 0.05);
+    line-height: 1;
+    pointer-events: none;
+    transition: color 0.4s;
+    user-select: none;
+}
+
+.industry-card:hover .industry-number {
+    color: rgba(0, 112, 243, 0.1);
+}
+
+/* CTA strip below grid */
+.industries-cta {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    justify-content: center;
+    margin-top: 60px;
+    padding: 36px 40px;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    border: 1px solid #e8edf3;
+    box-shadow: var(--shadow-sm);
+}
+
+.industries-cta p {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .industries-grid {
+        grid-template-columns: 1fr;
+    }
+    .industry-card--wide {
+        grid-column: auto;
+    }
+    .industry-card {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .industries-cta {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
 /* Portfolio / Projects Section */
 .portfolio {
     padding: 120px 0;
