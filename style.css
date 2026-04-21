@@ -738,9 +738,24 @@ nav {
    =================================================== */
 .industries-section {
     padding: 120px 0;
-    background: var(--bg-subtle);
+    background: linear-gradient(rgba(10, 15, 30, 0.88), rgba(10, 15, 30, 0.92)), url('assets/industries_bg.png') center/cover no-repeat fixed;
     position: relative;
     overflow: hidden;
+}
+
+.text-white {
+    color: #FFFFFF !important;
+}
+
+.industries-desc {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.industries-subtitle {
+    color: #00E5FF !important;
+    background: rgba(0, 229, 255, 0.1) !important;
+    padding: 4px 12px;
+    border-radius: 20px;
 }
 
 .industries-section::before {
