@@ -1222,6 +1222,10 @@ nav {
     font-weight: 500;
 }
 
+.contact-text a:hover {
+    color: var(--accent);
+}
+
 .modern-form {
     background: var(--white);
     padding: 48px;
