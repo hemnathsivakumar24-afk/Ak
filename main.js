@@ -106,20 +106,21 @@ if (contactForm) {
         const whatsappMessage = `*AK Robotic Contact Form*\n\n*Name:* ${name}\n*Email:* ${email}\n*Interest:* ${subject}\n*Message:* ${message}`;
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
-        // Email submission using FormSubmit
-        fetch("https://formsubmit.co/ajax/info@akrobotic.in", {
+        // Email submission using Web3Forms
+        fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                _subject: `New Website Inquiry from ${name} (${subject})`,
-                Name: name,
-                Email: email,
-                Subject: subject,
-                Message: message,
-                _replyto: email
+                access_key: "f761bcfa-0b21-4a11-b0dd-db53bc48d12d",
+                subject: `New Website Inquiry from ${name} (${subject})`,
+                name: name,
+                email: email,
+                service: subject,
+                message: message,
+                from_name: "AK Robotic Website"
             })
         })
         .then(response => response.json())
@@ -239,21 +240,23 @@ if (bookingForm) {
         const whatsappMessage = `Hello AK Robotic!\n\nI would like to book an appointment.\n*Name:* ${name}\n*Phone:* ${phone}\n*Service:* ${service}\n*Date:* ${date}\n*Time:* ${time}`;
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
-        // Email submission using FormSubmit via Fetch
-        fetch("https://formsubmit.co/ajax/info@akrobotic.in", {
+        // Email submission using Web3Forms
+        fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                _subject: `New Appointment Booking from ${name}`,
-                Name: name,
-                Phone: phone,
-                Service: service,
-                Date: date,
-                Time: time,
-                _autoresponse: 'Thank you for booking an appointment with AK Robotic. We will be in touch shortly.'
+                access_key: "f761bcfa-0b21-4a11-b0dd-db53bc48d12d",
+                subject: `New Appointment Booking from ${name}`,
+                name: name,
+                phone: phone,
+                service: service,
+                date: date,
+                time: time,
+                message: `Service: ${service}\nDate: ${date}\nTime: ${time}\nPhone: ${phone}`,
+                from_name: "AK Robotic Bookings"
             })
         })
         .then(response => response.json())
