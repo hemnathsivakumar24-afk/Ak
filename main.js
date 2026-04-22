@@ -107,7 +107,7 @@ if (contactForm) {
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
         // Email submission using FormSubmit
-        fetch("https://formsubmit.co/ajax/AKrobotic3@gmail.com", {
+        fetch("https://formsubmit.co/ajax/info@akrobotic.in", {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ if (bookingForm) {
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
         // Email submission using FormSubmit via Fetch
-        fetch("https://formsubmit.co/ajax/AKrobotic3@gmail.com", {
+        fetch("https://formsubmit.co/ajax/info@akrobotic.in", {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
