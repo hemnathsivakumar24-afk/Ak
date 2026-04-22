@@ -1209,12 +1209,19 @@ nav {
     font-size: 20px;
 }
 
+.contact-text a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 .contact-text strong {
     display: block;
     font-size: 14px;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 4px;
+    transition: all 0.3s ease;
 }
 
 .contact-text p, .contact-text a {
@@ -1224,6 +1231,10 @@ nav {
 
 .contact-text a:hover {
     color: var(--accent);
+}
+
+.contact-text a:hover strong {
+    opacity: 0.8;
 }
 
 .modern-form {
