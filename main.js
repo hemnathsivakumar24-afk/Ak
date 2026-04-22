@@ -84,6 +84,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Initial reveal call
 reveal();
 
+// Ensure Contact Links work across all browsers/systems
+document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        // We let the default happen, but also manually trigger as a fallback
+        const href = this.getAttribute('href');
+        if (href) {
+            window.location.assign(href);
+        }
+    });
+});
+
 // Form Submission Simulation
 const contactForm = document.getElementById("contact-form");
 if (contactForm) {
