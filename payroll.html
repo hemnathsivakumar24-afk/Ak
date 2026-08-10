@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK Robotic | Payroll Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0D1B2A;
+            --accent: #0070F3;
+            --accent2: #00C8FF;
+            --gold: #FFB000;
+            --white: #FFFFFF;
+            --text: #E8EDF2;
+            --text-muted: #8899AA;
+            --card-bg: #142030;
+            --input-bg: #0D1B2A;
+            --border: rgba(0,112,243,0.2);
+            --success: #00C48C;
+            --danger: #FF4D6A;
+            --gradient: linear-gradient(135deg, #0070F3, #00C8FF);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ===== LOADER ===== */
+        #app-loader {
+            position: fixed; inset: 0;
+            background: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; flex-direction: column; gap: 20px;
+        }
+        .loader-logo { width: 80px; animation: pulse 1.5s ease-in-out infinite; }
+        .loader-bar { width: 200px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .loader-fill { height: 100%; background: var(--gradient); border-radius: 10px; animation: loading 1.5s ease-in-out infinite; }
+        @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(0.95); } }
+
+        /* ===== LOGIN SCREEN ===== */
+        #login-screen {
+            display: none; min-height: 100vh;
+            align-items: center; justify-content: center;
+            background: radial-gradient(ellipse at 30% 50%, rgba(0,112,243,0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 20%, rgba(0,200,255,0.1) 0%, transparent 50%),
+                        var(--primary);
+        }
+        .login-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+            animation: fadeUp 0.5s ease;
+        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .login-logo { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+        .login-logo img { width: 50px; }
+        .login-logo-text h1 { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); }
+        .login-logo-text p { font-size: 12px; color: var(--accent2); letter-spacing: 2px; font-weight: 500; }
+
+        .login-title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .login-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%; padding: 14px 16px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text); font-size: 15px;
+            font-family: 'Inter', sans-serif; transition: border-color 0.2s;
+            outline: none;
+        }
+        .form-group input:focus { border-color: var(--accent); }
+
+        .btn-login {
+            width: 100%; padding: 15px;
+            background: var(--gradient); border: none;
+            border-radius: 10px; color: white;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: opacity 0.2s, transform 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-login:active { transform: translateY(0); }
+
+        .login-error {
+            background: rgba(255,77,106,0.15); border: 1px solid rgba(255,77,106,0.3);
+            color: #FF4D6A; border-radius: 8px; padding: 12px 16px;
+            font-size: 13px; margin-bottom: 16px; display: none;
+        }
+
+        /* ===== MAIN APP LAYOUT ===== */
+        #app-shell { display: none; min-height: 100vh; }
+
+        /* Navbar */
+        .app-nav {
+            background: rgba(20,32,48,0.95); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px; height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; }
+        .nav-brand img { width: 40px; }
+        .nav-brand-text { font-family: 'Outfit', sans-serif; }
+        .nav-brand-text h2 { font-size: 16px; font-weight: 700; color: var(--white); }
+        .nav-brand-text span { font-size: 11px; color: var(--accent2); letter-spacing: 2px; }
+
+        .nav-user { display: flex; align-items: center; gap: 16px; }
+        .nav-badge {
+            background: rgba(0,112,243,0.2); border: 1px solid rgba(0,112,243,0.4);
+            color: var(--accent2); padding: 4px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 600; letter-spacing: 1px;
+        }
+        .nav-badge.md { background: rgba(255,176,0,0.2); border-color: rgba(255,176,0,0.4); color: var(--gold); }
+        .btn-logout {
+            background: rgba(255,77,106,0.15); border: 1px solid rgba(255,77,106,0.3);
+            color: #FF4D6A; padding: 8px 16px; border-radius: 8px;
+            font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,77,106,0.25); }
+
+        /* Content area */
+        .app-content { padding: 40px 32px; max-width: 1200px; margin: 0 auto; }
+
+        /* ===== MD DASHBOARD ===== */
+        .page-header { margin-bottom: 40px; }
+        .page-header h1 { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 700; }
+        .page-header p { color: var(--text-muted); margin-top: 8px; font-size: 15px; }
+
+        /* Tabs */
+        .tab-bar { display: flex; gap: 4px; background: var(--card-bg); border-radius: 12px; padding: 6px; margin-bottom: 32px; width: fit-content; border: 1px solid var(--border); }
+        .tab-btn {
+            padding: 10px 24px; border-radius: 8px; border: none;
+            cursor: pointer; font-size: 14px; font-weight: 500;
+            background: transparent; color: var(--text-muted); transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn.active { background: var(--gradient); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Employee Cards Grid */
+        .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 24px; }
+        .emp-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px; cursor: pointer;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .emp-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient);
+        }
+        .emp-card:hover { border-color: rgba(0,112,243,0.5); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .emp-avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--gradient); display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700; color: white; margin-bottom: 16px;
+        }
+        .emp-name { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+        .emp-id { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .emp-desg { font-size: 13px; color: var(--accent2); }
+
+        /* Add Employee Card */
+        .add-emp-card {
+            background: rgba(0,112,243,0.05); border: 2px dashed rgba(0,112,243,0.3);
+            border-radius: 16px; padding: 24px; cursor: pointer;
+            transition: all 0.3s; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 160px; gap: 12px;
+        }
+        .add-emp-card:hover { border-color: var(--accent); background: rgba(0,112,243,0.1); }
+        .add-emp-icon { font-size: 36px; }
+        .add-emp-text { font-size: 14px; font-weight: 600; color: var(--accent); }
+
+        /* Forms */
+        .form-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px;
+        }
+        .form-card h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin-bottom: 8px; }
+        .form-card .sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 600px) { .form-row, .form-row.three { grid-template-columns: 1fr; } }
+
+        .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .field input, .field select {
+            width: 100%; padding: 12px 14px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text); font-size: 14px;
+            font-family: 'Inter', sans-serif; transition: border-color 0.2s; outline: none;
+        }
+        .field input:focus, .field select:focus { border-color: var(--accent); }
+        .field select option { background: var(--primary); }
+
+        .divider { border-color: var(--border); margin: 28px 0; }
+
+        .section-label {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 13px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .section-label.earnings { color: var(--success); }
+        .section-label.deductions { color: var(--danger); }
+
+        .btn-primary {
+            background: var(--gradient); border: none; color: white;
+            padding: 14px 32px; border-radius: 10px; font-size: 15px;
+            font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+            padding: 14px 32px; border-radius: 10px; font-size: 15px;
+            font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+
+        .toast {
+            position: fixed; bottom: 32px; right: 32px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            animation: slideIn 0.3s ease; font-size: 14px; font-weight: 500;
+            transform: translateX(200px); opacity: 0; transition: all 0.3s;
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.success { border-color: rgba(0,196,140,0.4); }
+        .toast.error { border-color: rgba(255,77,106,0.4); }
+        @keyframes slideIn { from { transform: translateX(200px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ===== EMPLOYEE DASHBOARD ===== */
+        .emp-welcome {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px;
+            display: flex; align-items: center; gap: 24px; margin-bottom: 32px;
+            position: relative; overflow: hidden;
+        }
+        .emp-welcome::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient);
+        }
+        .emp-welcome-avatar {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--gradient); display: flex; align-items: center;
+            justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0;
+        }
+        .emp-welcome-info h2 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 700; }
+        .emp-welcome-info p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+        .emp-welcome-info .emp-tag {
+            display: inline-block; margin-top: 8px;
+            background: rgba(0,112,243,0.2); border: 1px solid rgba(0,112,243,0.3);
+            color: var(--accent2); padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        .payslip-selector {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px; margin-bottom: 32px;
+        }
+        .payslip-selector h3 { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .selector-row { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+        .selector-row .field { flex: 1; min-width: 140px; }
+        .btn-fetch {
+            background: var(--gradient); border: none; color: white;
+            padding: 12px 28px; border-radius: 10px; font-size: 14px;
+            font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .btn-fetch:hover { opacity: 0.9; }
+
+        /* Payslip View */
+        #payslip-view { display: none; }
+        .payslip-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 40px; position: relative; overflow: hidden;
+        }
+        .payslip-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #0070F3, #00C8FF, #FFB000);
+        }
+
+        .payslip-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: gap; }
+        .payslip-company { display: flex; align-items: center; gap: 16px; }
+        .payslip-company img { width: 50px; }
+        .payslip-company-text h2 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; }
+        .payslip-company-text p { color: var(--text-muted); font-size: 12px; }
+        .payslip-title-tag {
+            background: rgba(0,112,243,0.2); border: 1px solid rgba(0,112,243,0.3);
+            padding: 8px 20px; border-radius: 30px;
+            font-size: 13px; font-weight: 600; color: var(--accent2); text-align: center;
+        }
+        .payslip-title-tag span { display: block; font-size: 18px; font-weight: 700; color: white; margin-top: 2px; }
+
+        .payslip-emp-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            background: rgba(0,0,0,0.2); border-radius: 12px;
+            padding: 20px; margin-bottom: 28px;
+        }
+        .info-item { display: flex; flex-direction: column; gap: 4px; }
+        .info-item .label { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .info-item .value { font-size: 14px; font-weight: 600; }
+
+        .pay-table { width: 100%; margin-bottom: 24px; }
+        .pay-table-header {
+            display: grid; grid-template-columns: 1fr 1fr;
+            background: rgba(0,112,243,0.15); border-radius: 8px 8px 0 0;
+            padding: 12px 16px;
+        }
+        .pay-table-header span { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); }
+        .pay-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            padding: 12px 16px; border-bottom: 1px solid var(--border);
+        }
+        .pay-row:last-child { border-bottom: none; }
+        .pay-row span:first-child { color: var(--text-muted); font-size: 14px; }
+        .pay-row span:last-child { font-size: 14px; font-weight: 500; text-align: right; }
+        .pay-row.earning span:last-child { color: var(--success); }
+        .pay-row.deduction span:last-child { color: var(--danger); }
+
+        .pay-tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        @media (max-width: 600px) { .pay-tables-grid { grid-template-columns: 1fr; } }
+        .pay-section-title {
+            font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            padding: 10px 16px; border-radius: 8px 8px 0 0;
+        }
+        .pay-section-title.earn { background: rgba(0,196,140,0.15); color: var(--success); }
+        .pay-section-title.deduct { background: rgba(255,77,106,0.15); color: var(--danger); }
+
+        .net-pay-bar {
+            background: var(--gradient); border-radius: 12px; padding: 20px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .net-pay-bar .label { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8); }
+        .net-pay-bar .amount { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; }
+
+        .btn-download {
+            display: flex; align-items: center; gap: 10px;
+            background: transparent; border: 2px solid var(--accent);
+            color: var(--accent); padding: 14px 32px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.2s; margin-top: 24px;
+        }
+        .btn-download:hover { background: var(--accent); color: white; }
+        .btn-download svg { width: 20px; height: 20px; }
+
+        .no-payslip {
+            text-align: center; padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .no-payslip .icon { font-size: 48px; margin-bottom: 16px; }
+        .no-payslip p { font-size: 16px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px); z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 36px; width: 100%; max-width: 500px;
+            animation: fadeUp 0.3s ease; max-height: 90vh; overflow-y: auto;
+        }
+        .modal h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin-bottom: 24px; }
+        .modal .field { margin-bottom: 16px; }
+        .modal-btns { display: flex; gap: 12px; margin-top: 24px; }
+
+        /* Spinner */
+        .spinner {
+            width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .payslip-footer { text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+    <!-- App Loader -->
+    <div id="app-loader">
+        <img src="/assets/logo.png" alt="AK Robotic" class="loader-logo">
+        <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" style="display:none; min-height:100vh; align-items:center; justify-content:center; display:none;">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="/assets/logo.png" alt="AK Robotic">
+                <div class="login-logo-text">
+                    <h1>AK Robotic</h1>
+                    <p>PAYROLL PORTAL</p>
+                </div>
+            </div>
+            <h2 class="login-title">Welcome Back</h2>
+            <p class="login-sub">Sign in to access your payroll dashboard</p>
+            <div class="login-error" id="login-error"></div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <button class="btn-login" id="login-btn" onclick="handleLogin()">Sign In</button>
+        </div>
+    </div>
+
+    <!-- App Shell -->
+    <div id="app-shell" style="display:none;">
+        <!-- Navbar -->
+        <nav class="app-nav">
+            <div class="nav-brand">
+                <img src="/assets/logo.png" alt="AK Robotic">
+                <div class="nav-brand-text">
+                    <h2>AK Robotic</h2>
+                    <span>PAYROLL PORTAL</span>
+                </div>
+            </div>
+            <div class="nav-user">
+                <span class="nav-badge" id="role-badge">EMPLOYEE</span>
+                <span id="nav-user-name" style="font-size:14px; color:var(--text-muted);"></span>
+                <button class="btn-logout" onclick="handleLogout()">Sign Out</button>
+            </div>
+        </nav>
+
+        <!-- MD Dashboard -->
+        <div id="md-dashboard" style="display:none;">
+            <div class="app-content">
+                <div class="page-header">
+                    <h1>MD Dashboard 👋</h1>
+                    <p>Manage your team's payroll — add employees, enter monthly salary details.</p>
+                </div>
+
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="tab-team" onclick="switchTab('team')">👥 My Team</button>
+                    <button class="tab-btn" id="tab-payroll" onclick="switchTab('payroll')">💰 Enter Payroll</button>
+                </div>
+
+                <!-- Team Tab -->
+                <div class="tab-panel active" id="panel-team">
+                    <div class="emp-grid" id="emp-grid">
+                        <div class="add-emp-card" onclick="openAddEmpModal()">
+                            <div class="add-emp-icon">➕</div>
+                            <div class="add-emp-text">Add New Employee</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payroll Tab -->
+                <div class="tab-panel" id="panel-payroll">
+                    <div class="form-card">
+                        <h2>Enter Monthly Payroll</h2>
+                        <p class="sub">Select an employee and month to enter or update their payslip.</p>
+
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Employee</label>
+                                <select id="pr-employee">
+                                    <option value="">Select Employee</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Month</label>
+                                <select id="pr-month">
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Year</label>
+                                <select id="pr-year">
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Days Worked</label>
+                                <input type="number" id="pr-days-worked" placeholder="26" min="0" max="31">
+                            </div>
+                            <div class="field">
+                                <label>Days Leave / Absent</label>
+                                <input type="number" id="pr-days-leave" placeholder="0" min="0">
+                            </div>
+                        </div>
+
+                        <p class="section-label earnings">💰 Earnings</p>
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Basic Salary (₹)</label>
+                                <input type="number" id="pr-basic" placeholder="0">
+                            </div>
+                            <div class="field">
+                                <label>HRA (₹)</label>
+                                <input type="number" id="pr-hra" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Travel Allowance (₹)</label>
+                                <input type="number" id="pr-travel" placeholder="0">
+                            </div>
+                            <div class="field">
+                                <label>Other Allowances (₹)</label>
+                                <input type="number" id="pr-other-allow" placeholder="0">
+                            </div>
+                        </div>
+
+                        <p class="section-label deductions">📉 Deductions</p>
+                        <div class="form-row">
+                            <div class="field">
+                                <label>PF Deduction (₹)</label>
+                                <input type="number" id="pr-pf" placeholder="0">
+                            </div>
+                            <div class="field">
+                                <label>TDS Deduction (₹)</label>
+                                <input type="number" id="pr-tds" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Other Deductions (₹)</label>
+                                <input type="number" id="pr-other-ded" placeholder="0">
+                            </div>
+                            <div class="field">
+                                <label>Net Pay (₹) — Auto</label>
+                                <input type="number" id="pr-net" placeholder="Auto-calculated" readonly style="background:rgba(0,196,140,0.08); border-color:rgba(0,196,140,0.3);">
+                            </div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button class="btn-primary" onclick="savePayroll()" id="save-payroll-btn">Save Payslip ✓</button>
+                            <button class="btn-secondary" onclick="loadExistingPayroll()">Load Existing</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Dashboard -->
+        <div id="emp-dashboard" style="display:none;">
+            <div class="app-content">
+                <div class="emp-welcome">
+                    <div class="emp-welcome-avatar" id="emp-avatar-letter">A</div>
+                    <div class="emp-welcome-info">
+                        <h2 id="emp-welcome-name">Welcome!</h2>
+                        <p id="emp-welcome-desg">—</p>
+                        <span class="emp-tag" id="emp-welcome-id">EMP ID: —</span>
+                    </div>
+                </div>
+
+                <div class="payslip-selector">
+                    <h3>📄 Download Your Payslip</h3>
+                    <div class="selector-row">
+                        <div class="field">
+                            <label>Month</label>
+                            <select id="emp-month">
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Year</label>
+                            <select id="emp-year">
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026" selected>2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                        <button class="btn-fetch" onclick="fetchEmpPayslip()">View Payslip →</button>
+                    </div>
+                </div>
+
+                <div id="payslip-view">
+                    <div class="payslip-card" id="payslip-content">
+                        <div class="payslip-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+                            <div class="payslip-company">
+                                <img src="/assets/logo.png" alt="AK Robotic">
+                                <div class="payslip-company-text">
+                                    <h2>AK Robotic</h2>
+                                    <p>Precision Automation & Industrial Solutions</p>
+                                    <p style="color:var(--text-muted); font-size:11px;">Chennai, Tamil Nadu, India | akrobotic.in</p>
+                                </div>
+                            </div>
+                            <div class="payslip-title-tag">
+                                PAYSLIP
+                                <span id="ps-month-year">—</span>
+                            </div>
+                        </div>
+
+                        <div class="payslip-emp-info">
+                            <div class="info-item">
+                                <span class="label">Employee Name</span>
+                                <span class="value" id="ps-name">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Employee ID</span>
+                                <span class="value" id="ps-empid">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Designation</span>
+                                <span class="value" id="ps-desg">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Bank Account</span>
+                                <span class="value" id="ps-bank">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Days Worked</span>
+                                <span class="value" id="ps-days-worked">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Days Leave</span>
+                                <span class="value" id="ps-days-leave">—</span>
+                            </div>
+                        </div>
+
+                        <div class="pay-tables-grid">
+                            <div>
+                                <div class="pay-section-title earn">💰 Earnings</div>
+                                <div class="pay-row earning"><span>Basic Salary</span><span id="ps-basic">₹0</span></div>
+                                <div class="pay-row earning"><span>HRA</span><span id="ps-hra">₹0</span></div>
+                                <div class="pay-row earning"><span>Travel Allowance</span><span id="ps-travel">₹0</span></div>
+                                <div class="pay-row earning"><span>Other Allowances</span><span id="ps-other-allow">₹0</span></div>
+                                <div class="pay-row" style="background:rgba(0,196,140,0.08); font-weight:700;">
+                                    <span>Gross Earnings</span><span id="ps-gross" style="color:var(--success);">₹0</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="pay-section-title deduct">📉 Deductions</div>
+                                <div class="pay-row deduction"><span>PF</span><span id="ps-pf">₹0</span></div>
+                                <div class="pay-row deduction"><span>TDS</span><span id="ps-tds">₹0</span></div>
+                                <div class="pay-row deduction"><span>Other Deductions</span><span id="ps-other-ded">₹0</span></div>
+                                <div class="pay-row" style="background:rgba(255,77,106,0.08); font-weight:700;">
+                                    <span>Total Deductions</span><span id="ps-total-ded" style="color:var(--danger);">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="net-pay-bar">
+                            <div>
+                                <div class="label">NET PAY (Take Home)</div>
+                                <div style="font-size:12px; color:rgba(255,255,255,0.6); margin-top:2px;" id="ps-net-words"></div>
+                            </div>
+                            <div class="amount" id="ps-net">₹0</div>
+                        </div>
+
+                        <div class="payslip-footer">
+                            This is a system-generated payslip. For queries, contact HR. | AK Robotic © 2026
+                        </div>
+                    </div>
+
+                    <button class="btn-download" onclick="downloadPDF()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download PDF Payslip
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div class="modal-overlay" id="add-emp-modal">
+        <div class="modal">
+            <h2>➕ Add New Employee</h2>
+            <div class="field"><label>Full Name</label><input type="text" id="ae-name" placeholder="John Doe"></div>
+            <div class="field"><label>Employee ID</label><input type="text" id="ae-empid" placeholder="EMP001"></div>
+            <div class="field"><label>Designation</label><input type="text" id="ae-desg" placeholder="Engineer"></div>
+            <div class="field"><label>Email Address</label><input type="email" id="ae-email" placeholder="john@email.com"></div>
+            <div class="field"><label>Password (for login)</label><input type="text" id="ae-password" placeholder="Minimum 6 characters"></div>
+            <div class="field"><label>Bank Account Number</label><input type="text" id="ae-bank" placeholder="XXXX XXXX XXXX"></div>
+            <div class="login-error" id="ae-error"></div>
+            <div class="modal-btns">
+                <button class="btn-primary" onclick="addEmployee()" id="ae-btn">Create Account</button>
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toast-icon">✓</span>
+        <span id="toast-msg">Success</span>
+    </div>
+
+    <!-- Firebase & App Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1Ir5luEjH-Su8FKc_H-UfDVVAzqBjyvs",
+            authDomain: "ak-robotic-payroll.firebaseapp.com",
+            projectId: "ak-robotic-payroll",
+            storageBucket: "ak-robotic-payroll.firebasestorage.app",
+            messagingSenderId: "652742830399",
+            appId: "1:652742830399:web:940712679bb095af4ecb8a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const MD_EMAIL = 'akrobotic3@gmail.com';
+        let currentUser = null;
+        let currentUserData = null;
+        let allEmployees = [];
+
+        // ===== UTILITY =====
+        function fmt(n) { return '₹' + (Number(n)||0).toLocaleString('en-IN'); }
+        function showToast(msg, type='success') {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            document.getElementById('toast-icon').textContent = type === 'success' ? '✓' : '✕';
+            t.className = 'toast show ' + type;
+            setTimeout(() => t.className = 'toast ' + type, 3000);
+        }
+
+        // ===== AUTH STATE =====
+        onAuthStateChanged(auth, async (user) => {
+            document.getElementById('app-loader').style.display = 'none';
+            if (!user) {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('app-shell').style.display = 'none';
+                return;
+            }
+            currentUser = user;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-shell').style.display = 'block';
+
+            if (user.email === MD_EMAIL) {
+                // MD
+                document.getElementById('role-badge').textContent = 'MD';
+                document.getElementById('role-badge').className = 'nav-badge md';
+                document.getElementById('nav-user-name').textContent = 'Managing Director';
+                document.getElementById('md-dashboard').style.display = 'block';
+                document.getElementById('emp-dashboard').style.display = 'none';
+                await loadEmployees();
+            } else {
+                // Employee
+                document.getElementById('md-dashboard').style.display = 'none';
+                document.getElementById('emp-dashboard').style.display = 'block';
+                await loadEmployeeProfile(user.uid);
+            }
+
+            // Set current month
+            const now = new Date();
+            const m = String(now.getMonth()+1).padStart(2,'0');
+            document.querySelectorAll('#emp-month, #pr-month').forEach(el => el.value = m);
+        });
+
+        // ===== LOGIN =====
+        window.handleLogin = async function() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+            const err = document.getElementById('login-error');
+            err.style.display = 'none';
+            btn.innerHTML = '<span class="spinner"></span>';
+            btn.disabled = true;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch(e) {
+                err.style.display = 'block';
+                err.textContent = 'Invalid email or password. Please try again.';
+                btn.innerHTML = 'Sign In';
+                btn.disabled = false;
+            }
+        };
+
+        // Login on Enter key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+                handleLogin();
+            }
+        });
+
+        // ===== LOGOUT =====
+        window.handleLogout = async function() {
+            await signOut(auth);
+        };
+
+        // ===== TABS =====
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+        };
+
+        // ===== LOAD EMPLOYEES (MD) =====
+        async function loadEmployees() {
+            const snap = await getDocs(collection(db, 'users'));
+            allEmployees = [];
+            const grid = document.getElementById('emp-grid');
+            const sel = document.getElementById('pr-employee');
+            sel.innerHTML = '<option value="">Select Employee</option>';
+            grid.innerHTML = `<div class="add-emp-card" onclick="openAddEmpModal()"><div class="add-emp-icon">➕</div><div class="add-emp-text">Add New Employee</div></div>`;
+
+            snap.forEach(d => {
+                const data = d.data();
+                allEmployees.push({uid: d.id, ...data});
+
+                // Card
+                const card = document.createElement('div');
+                card.className = 'emp-card';
+                card.innerHTML = `
+                    <div class="emp-avatar">${data.name ? data.name[0].toUpperCase() : '?'}</div>
+                    <div class="emp-name">${data.name || '—'}</div>
+                    <div class="emp-id">ID: ${data.empId || '—'}</div>
+                    <div class="emp-desg">${data.designation || '—'}</div>
+                `;
+                grid.appendChild(card);
+
+                // Dropdown
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = `${data.name} (${data.empId})`;
+                sel.appendChild(opt);
+            });
+        }
+
+        // ===== ADD EMPLOYEE MODAL =====
+        window.openAddEmpModal = function() {
+            document.getElementById('add-emp-modal').classList.add('open');
+        };
+        window.closeModal = function() {
+            document.getElementById('add-emp-modal').classList.remove('open');
+        };
+
+        window.addEmployee = async function() {
+            const name = document.getElementById('ae-name').value.trim();
+            const empId = document.getElementById('ae-empid').value.trim();
+            const desg = document.getElementById('ae-desg').value.trim();
+            const email = document.getElementById('ae-email').value.trim();
+            const pass = document.getElementById('ae-password').value;
+            const bank = document.getElementById('ae-bank').value.trim();
+            const err = document.getElementById('ae-error');
+            const btn = document.getElementById('ae-btn');
+
+            if (!name || !empId || !email || !pass) {
+                err.style.display = 'block'; err.textContent = 'Please fill all required fields.'; return;
+            }
+            if (pass.length < 6) {
+                err.style.display = 'block'; err.textContent = 'Password must be at least 6 characters.'; return;
+            }
+
+            err.style.display = 'none';
+            btn.innerHTML = '<span class="spinner"></span> Creating...';
+            btn.disabled = true;
+
+            try {
+                // Create secondary auth instance to not lose MD session
+                const { initializeApp: initApp2 } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+                const { getAuth: getAuth2, createUserWithEmailAndPassword: createUser2 } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+                const app2 = initApp2(firebaseConfig, 'secondary-' + Date.now());
+                const auth2 = getAuth2(app2);
+                const cred = await createUser2(auth2, email, pass);
+                await auth2.signOut();
+
+                // Save to Firestore
+                await setDoc(doc(db, 'users', cred.user.uid), {
+                    name, empId, designation: desg, email, bankAccount: bank, role: 'employee'
+                });
+
+                closeModal();
+                showToast(`${name} added successfully!`);
+                // Clear fields
+                ['ae-name','ae-empid','ae-desg','ae-email','ae-password','ae-bank'].forEach(id => document.getElementById(id).value = '');
+                btn.innerHTML = 'Create Account'; btn.disabled = false;
+                await loadEmployees();
+            } catch(e) {
+                err.style.display = 'block';
+                err.textContent = e.code === 'auth/email-already-in-use' ? 'This email is already registered.' : 'Error: ' + e.message;
+                btn.innerHTML = 'Create Account'; btn.disabled = false;
+            }
+        };
+
+        // ===== AUTO-CALCULATE NET PAY =====
+        const prInputs = ['pr-basic','pr-hra','pr-travel','pr-other-allow','pr-pf','pr-tds','pr-other-ded'];
+        prInputs.forEach(id => {
+            document.getElementById(id)?.addEventListener('input', calcNet);
+        });
+
+        function calcNet() {
+            const basic = Number(document.getElementById('pr-basic').value)||0;
+            const hra = Number(document.getElementById('pr-hra').value)||0;
+            const travel = Number(document.getElementById('pr-travel').value)||0;
+            const otherAllow = Number(document.getElementById('pr-other-allow').value)||0;
+            const pf = Number(document.getElementById('pr-pf').value)||0;
+            const tds = Number(document.getElementById('pr-tds').value)||0;
+            const otherDed = Number(document.getElementById('pr-other-ded').value)||0;
+            const gross = basic + hra + travel + otherAllow;
+            const deductions = pf + tds + otherDed;
+            document.getElementById('pr-net').value = gross - deductions;
+        }
+
+        // ===== SAVE PAYROLL =====
+        window.savePayroll = async function() {
+            const empUid = document.getElementById('pr-employee').value;
+            const month = document.getElementById('pr-month').value;
+            const year = document.getElementById('pr-year').value;
+            const btn = document.getElementById('save-payroll-btn');
+
+            if (!empUid) { showToast('Please select an employee.', 'error'); return; }
+
+            btn.innerHTML = '<span class="spinner"></span> Saving...';
+            btn.disabled = true;
+
+            const data = {
+                basicSalary: Number(document.getElementById('pr-basic').value)||0,
+                hra: Number(document.getElementById('pr-hra').value)||0,
+                travelAllowance: Number(document.getElementById('pr-travel').value)||0,
+                otherAllowances: Number(document.getElementById('pr-other-allow').value)||0,
+                pfDeduction: Number(document.getElementById('pr-pf').value)||0,
+                tdsDeduction: Number(document.getElementById('pr-tds').value)||0,
+                otherDeductions: Number(document.getElementById('pr-other-ded').value)||0,
+                netPay: Number(document.getElementById('pr-net').value)||0,
+                daysWorked: Number(document.getElementById('pr-days-worked').value)||0,
+                daysLeave: Number(document.getElementById('pr-days-leave').value)||0,
+                month, year, updatedAt: new Date().toISOString()
+            };
+
+            try {
+                await setDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`), data);
+                showToast('Payslip saved successfully!');
+            } catch(e) {
+                showToast('Error saving: ' + e.message, 'error');
+            }
+
+            btn.innerHTML = 'Save Payslip ✓'; btn.disabled = false;
+        };
+
+        // ===== LOAD EXISTING PAYROLL =====
+        window.loadExistingPayroll = async function() {
+            const empUid = document.getElementById('pr-employee').value;
+            const month = document.getElementById('pr-month').value;
+            const year = document.getElementById('pr-year').value;
+            if (!empUid) { showToast('Please select an employee.', 'error'); return; }
+
+            const snap = await getDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`));
+            if (!snap.exists()) { showToast('No payslip found for this month.', 'error'); return; }
+            const d = snap.data();
+            document.getElementById('pr-basic').value = d.basicSalary||0;
+            document.getElementById('pr-hra').value = d.hra||0;
+            document.getElementById('pr-travel').value = d.travelAllowance||0;
+            document.getElementById('pr-other-allow').value = d.otherAllowances||0;
+            document.getElementById('pr-pf').value = d.pfDeduction||0;
+            document.getElementById('pr-tds').value = d.tdsDeduction||0;
+            document.getElementById('pr-other-ded').value = d.otherDeductions||0;
+            document.getElementById('pr-days-worked').value = d.daysWorked||0;
+            document.getElementById('pr-days-leave').value = d.daysLeave||0;
+            calcNet();
+            showToast('Payslip loaded!');
+        };
+
+        // ===== LOAD EMPLOYEE PROFILE =====
+        async function loadEmployeeProfile(uid) {
+            const snap = await getDoc(doc(db, 'users', uid));
+            if (snap.exists()) {
+                currentUserData = snap.data();
+                document.getElementById('emp-welcome-name').textContent = currentUserData.name || '—';
+                document.getElementById('emp-welcome-desg').textContent = currentUserData.designation || '—';
+                document.getElementById('emp-welcome-id').textContent = 'EMP ID: ' + (currentUserData.empId || '—');
+                document.getElementById('emp-avatar-letter').textContent = (currentUserData.name||'?')[0].toUpperCase();
+                document.getElementById('nav-user-name').textContent = currentUserData.name || '';
+            }
+        }
+
+        // ===== FETCH EMPLOYEE PAYSLIP =====
+        window.fetchEmpPayslip = async function() {
+            const month = document.getElementById('emp-month').value;
+            const year = document.getElementById('emp-year').value;
+            const view = document.getElementById('payslip-view');
+            view.style.display = 'none';
+
+            const snap = await getDoc(doc(db, 'payroll', currentUser.uid, 'months', `${year}-${month}`));
+            if (!snap.exists()) {
+                showToast('No payslip found for this month.', 'error'); return;
+            }
+            const d = snap.data();
+            const monthNames = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+
+            document.getElementById('ps-month-year').textContent = `${monthNames[parseInt(month)]} ${year}`;
+            document.getElementById('ps-name').textContent = currentUserData?.name || '—';
+            document.getElementById('ps-empid').textContent = currentUserData?.empId || '—';
+            document.getElementById('ps-desg').textContent = currentUserData?.designation || '—';
+            document.getElementById('ps-bank').textContent = currentUserData?.bankAccount || '—';
+            document.getElementById('ps-days-worked').textContent = d.daysWorked || '—';
+            document.getElementById('ps-days-leave').textContent = d.daysLeave ?? '—';
+
+            document.getElementById('ps-basic').textContent = fmt(d.basicSalary);
+            document.getElementById('ps-hra').textContent = fmt(d.hra);
+            document.getElementById('ps-travel').textContent = fmt(d.travelAllowance);
+            document.getElementById('ps-other-allow').textContent = fmt(d.otherAllowances);
+
+            const gross = (d.basicSalary||0)+(d.hra||0)+(d.travelAllowance||0)+(d.otherAllowances||0);
+            document.getElementById('ps-gross').textContent = fmt(gross);
+
+            document.getElementById('ps-pf').textContent = fmt(d.pfDeduction);
+            document.getElementById('ps-tds').textContent = fmt(d.tdsDeduction);
+            document.getElementById('ps-other-ded').textContent = fmt(d.otherDeductions);
+
+            const totalDed = (d.pfDeduction||0)+(d.tdsDeduction||0)+(d.otherDeductions||0);
+            document.getElementById('ps-total-ded').textContent = fmt(totalDed);
+            document.getElementById('ps-net').textContent = fmt(d.netPay);
+
+            view.style.display = 'block';
+        };
+
+        // ===== DOWNLOAD PDF =====
+        window.downloadPDF = function() {
+            const { jsPDF } = window.jspdf;
+            const doc2 = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const monthYr = document.getElementById('ps-month-year').textContent;
+            const empName = document.getElementById('ps-name').textContent;
+
+            // Colors
+            const blue = [0, 112, 243];
+            const dark = [13, 27, 42];
+            const light = [232, 237, 242];
+            const green = [0, 196, 140];
+            const red = [255, 77, 106];
+            const muted = [136, 153, 170];
+
+            // Background
+            doc2.setFillColor(...dark);
+            doc2.rect(0, 0, 210, 297, 'F');
+
+            // Header bar
+            doc2.setFillColor(...blue);
+            doc2.rect(0, 0, 210, 40, 'F');
+
+            // Company name
+            doc2.setTextColor(255, 255, 255);
+            doc2.setFont('helvetica', 'bold');
+            doc2.setFontSize(22);
+            doc2.text('AK Robotic', 20, 18);
+            doc2.setFontSize(9);
+            doc2.setFont('helvetica', 'normal');
+            doc2.setTextColor(200, 225, 255);
+            doc2.text('Precision Automation & Industrial Solutions', 20, 25);
+            doc2.text('Chennai, Tamil Nadu | akrobotic.in', 20, 31);
+
+            // Payslip tag (right)
+            doc2.setFillColor(255,255,255);
+            doc2.roundedRect(140, 8, 55, 24, 3, 3, 'F');
+            doc2.setTextColor(...blue);
+            doc2.setFont('helvetica', 'bold');
+            doc2.setFontSize(8);
+            doc2.text('PAYSLIP', 167, 17, {align:'center'});
+            doc2.setFontSize(13);
+            doc2.text(monthYr, 167, 26, {align:'center'});
+
+            // Employee info section
+            doc2.setFillColor(20, 32, 48);
+            doc2.roundedRect(15, 48, 180, 36, 4, 4, 'F');
+
+            const fields = [
+                ['Employee Name', document.getElementById('ps-name').textContent],
+                ['Employee ID', document.getElementById('ps-empid').textContent],
+                ['Designation', document.getElementById('ps-desg').textContent],
+                ['Bank Account', document.getElementById('ps-bank').textContent],
+                ['Days Worked', document.getElementById('ps-days-worked').textContent],
+                ['Days Leave', document.getElementById('ps-days-leave').textContent],
+            ];
+            const cols = [[15,105],[105,105]];
+            let row = 0;
+            fields.forEach((f, i) => {
+                const [x] = cols[i%2];
+                const y = 57 + Math.floor(i/2) * 12;
+                doc2.setFontSize(8); doc2.setFont('helvetica','normal'); doc2.setTextColor(...muted);
+                doc2.text(f[0].toUpperCase(), x+5, y);
+                doc2.setFontSize(10); doc2.setFont('helvetica','bold'); doc2.setTextColor(...light);
+                doc2.text(f[1], x+5, y+6);
+            });
+
+            // Earnings table
+            let y = 95;
+            doc2.setFillColor(0, 80, 160);
+            doc2.roundedRect(15, y, 85, 8, 2, 2, 'F');
+            doc2.setTextColor(255,255,255); doc2.setFont('helvetica','bold'); doc2.setFontSize(9);
+            doc2.text('💰 EARNINGS', 20, y+5.5);
+
+            const earnings = [
+                ['Basic Salary', document.getElementById('ps-basic').textContent],
+                ['HRA', document.getElementById('ps-hra').textContent],
+                ['Travel Allowance', document.getElementById('ps-travel').textContent],
+                ['Other Allowances', document.getElementById('ps-other-allow').textContent],
+                ['Gross Earnings', document.getElementById('ps-gross').textContent],
+            ];
+            y += 10;
+            earnings.forEach((e, i) => {
+                const isBold = i === earnings.length - 1;
+                if (isBold) { doc2.setFillColor(0,50,30); doc2.rect(15, y-4, 85, 10, 'F'); }
+                doc2.setFont('helvetica', isBold ? 'bold' : 'normal');
+                doc2.setFontSize(9);
+                doc2.setTextColor(...(isBold ? green : light));
+                doc2.text(e[0], 20, y+2);
+                doc2.text(e[1], 98, y+2, {align:'right'});
+                if (!isBold) { doc2.setDrawColor(30,50,70); doc2.line(15, y+4, 100, y+4); }
+                y += 10;
+            });
+
+            // Deductions table
+            y = 95;
+            doc2.setFillColor(120, 0, 30);
+            doc2.roundedRect(110, y, 85, 8, 2, 2, 'F');
+            doc2.setTextColor(255,255,255); doc2.setFont('helvetica','bold'); doc2.setFontSize(9);
+            doc2.text('📉 DEDUCTIONS', 115, y+5.5);
+
+            const deductions = [
+                ['PF', document.getElementById('ps-pf').textContent],
+                ['TDS', document.getElementById('ps-tds').textContent],
+                ['Other Deductions', document.getElementById('ps-other-ded').textContent],
+                ['Total Deductions', document.getElementById('ps-total-ded').textContent],
+            ];
+            y += 10;
+            deductions.forEach((d, i) => {
+                const isBold = i === deductions.length - 1;
+                if (isBold) { doc2.setFillColor(60,0,20); doc2.rect(110, y-4, 85, 10, 'F'); }
+                doc2.setFont('helvetica', isBold ? 'bold' : 'normal');
+                doc2.setFontSize(9);
+                doc2.setTextColor(...(isBold ? red : light));
+                doc2.text(d[0], 115, y+2);
+                doc2.text(d[1], 193, y+2, {align:'right'});
+                if (!isBold) { doc2.setDrawColor(60,30,40); doc2.line(110, y+4, 195, y+4); }
+                y += 10;
+            });
+
+            // Net Pay bar
+            y = Math.max(y, 155) + 5;
+            doc2.setFillColor(...blue);
+            doc2.roundedRect(15, y, 180, 22, 4, 4, 'F');
+            doc2.setTextColor(255,255,255); doc2.setFont('helvetica','normal'); doc2.setFontSize(10);
+            doc2.text('NET PAY (Take Home)', 22, y+9);
+            doc2.setFont('helvetica','bold'); doc2.setFontSize(18);
+            doc2.text(document.getElementById('ps-net').textContent, 193, y+14, {align:'right'});
+
+            // Footer
+            y += 30;
+            doc2.setDrawColor(30,50,70); doc2.line(15, y, 195, y);
+            doc2.setTextColor(...muted); doc2.setFont('helvetica','normal'); doc2.setFontSize(8);
+            doc2.text('This is a computer-generated payslip and does not require a signature.', 105, y+7, {align:'center'});
+            doc2.text(`Generated on ${new Date().toLocaleDateString('en-IN')} | AK Robotic © 2026`, 105, y+13, {align:'center'});
+
+            doc2.save(`AKRobotic_Payslip_${empName.replace(' ','_')}_${monthYr.replace(' ','_')}.pdf`);
+            showToast('PDF downloaded!');
+        };
+    </script>
+</body>
+</html>
