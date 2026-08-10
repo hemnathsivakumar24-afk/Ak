@@ -393,6 +393,7 @@
                 <div class="tab-bar">
                     <button class="tab-btn active" id="tab-team" onclick="switchTab('team')">👥 My Team</button>
                     <button class="tab-btn" id="tab-payroll" onclick="switchTab('payroll')">💰 Enter Payroll</button>
+                    <button class="tab-btn" id="tab-view" onclick="switchTab('view')">👁️ View Payslips</button>
                 </div>
 
                 <!-- Team Panel -->
@@ -472,10 +473,48 @@
                         <div class="btn-row">
                             <button class="btn-primary" onclick="savePayroll()" id="save-payroll-btn">Save Payslip ✓</button>
                             <button class="btn-secondary" onclick="loadExistingPayroll()">Load Existing</button>
+                            <button class="btn-secondary" onclick="previewFormPayslip()">👁️ Preview Payslip</button>
                             <button class="btn-secondary" onclick="clearPayrollForm()" style="color:#6B7280;">Clear Form</button>
                             <button class="btn-danger" onclick="deletePayroll()" id="delete-payroll-btn">Delete Payslip 🗑️</button>
                         </div>
+                        <div id="form-preview-display" style="display:none; margin-top:32px;"></div>
                     </div>
+                </div>
+
+                <!-- View Payslips Panel (MD) -->
+                <div class="tab-panel" id="panel-view">
+                    <div class="form-card" style="margin-bottom: 28px;">
+                        <h2>👁️ View & Download Employee Payslips</h2>
+                        <p class="sub">Select any employee and month/year to view their complete formatted payslip.</p>
+
+                        <div class="form-row three">
+                            <div class="field"><label>Employee</label>
+                                <select id="md-view-employee"><option value="">Select Employee</option></select>
+                            </div>
+                            <div class="field"><label>Month</label>
+                                <select id="md-view-month">
+                                    <option value="01">January</option><option value="02">February</option>
+                                    <option value="03">March</option><option value="04">April</option>
+                                    <option value="05">May</option><option value="06">June</option>
+                                    <option value="07">July</option><option value="08">August</option>
+                                    <option value="09">September</option><option value="10">October</option>
+                                    <option value="11">November</option><option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="field"><label>Year</label>
+                                <select id="md-view-year">
+                                    <option value="2024">2024</option><option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option><option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button class="btn-primary" onclick="fetchMdPayslip()">👁️ View Payslip</button>
+                        </div>
+                    </div>
+
+                    <div id="md-payslip-display" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -740,7 +779,9 @@
             allEmployees = [];
             const grid = document.getElementById('emp-grid');
             const sel = document.getElementById('pr-employee');
-            sel.innerHTML = '<option value="">Select Employee</option>';
+            const selView = document.getElementById('md-view-employee');
+            if (sel) sel.innerHTML = '<option value="">Select Employee</option>';
+            if (selView) selView.innerHTML = '<option value="">Select Employee</option>';
             grid.innerHTML = `<div class="add-emp-card" onclick="openAddEmpModal()"><div class="add-emp-icon">➕</div><div class="add-emp-text">Add New Employee</div></div>`;
             snap.forEach(d => {
                 const data = d.data();
@@ -750,18 +791,35 @@
                 card.style.position = 'relative';
                 const safeName = (data.name||'Employee').replace(/'/g, "\\'");
                 card.innerHTML = `
-                    <button onclick="event.stopPropagation(); deleteEmployee('${d.id}', '${safeName}')" title="Delete Employee" style="position:absolute; top:16px; right:16px; background:#FEF2F2; border:1px solid #FECACA; color:#DC2626; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.2s;">🗑️ Delete</button>
+                    <div style="position:absolute; top:16px; right:16px; display:flex; gap:6px;">
+                        <button onclick="event.stopPropagation(); viewEmployeePayslips('${d.id}')" title="View Payslips" style="background:#EFF6FF; border:1px solid #BFDBFE; color:#0070F3; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.2s;">👁️ Payslips</button>
+                        <button onclick="event.stopPropagation(); deleteEmployee('${d.id}', '${safeName}')" title="Delete Employee" style="background:#FEF2F2; border:1px solid #FECACA; color:#DC2626; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.2s;">🗑️ Delete</button>
+                    </div>
                     <div class="emp-avatar">${(data.name||'?')[0].toUpperCase()}</div>
-                    <div class="emp-name">${data.name||'—'}</div>
+                    <div class="emp-name" style="margin-top:8px;">${data.name||'—'}</div>
                     <div class="emp-id">ID: ${data.empId||'—'}</div>
                     <div class="emp-desg">${data.designation||'—'}</div>
                 `;
                 grid.appendChild(card);
-                const opt = document.createElement('option');
-                opt.value = d.id; opt.textContent = `${data.name} (${data.empId})`;
-                sel.appendChild(opt);
+                if (sel) {
+                    const opt = document.createElement('option');
+                    opt.value = d.id; opt.textContent = `${data.name} (${data.empId})`;
+                    sel.appendChild(opt);
+                }
+                if (selView) {
+                    const optView = document.createElement('option');
+                    optView.value = d.id; optView.textContent = `${data.name} (${data.empId})`;
+                    selView.appendChild(optView);
+                }
             });
         }
+
+        window.viewEmployeePayslips = function(uid) {
+            const selView = document.getElementById('md-view-employee');
+            if (selView) selView.value = uid;
+            switchTab('view');
+            fetchMdPayslip();
+        };
 
         window.deleteEmployee = async function(uid, name) {
             if (confirm(`Are you sure you want to delete employee "${name}"? This action cannot be undone.`)) {
@@ -931,6 +989,183 @@
             }
         }
 
+        // ===== PAYSLIP HTML GENERATOR =====
+        function generatePayslipHTML(u, d, month, year) {
+            const mName = MONTHS[parseInt(month)];
+            const yr = parseInt(year); const mo = parseInt(month);
+            const fyStart = mo >= 4 ? yr : yr - 1;
+            const fyEnd = fyStart + 1;
+
+            const earnings = [
+                ['Basic', d.basic], ['House Rent Allowance', d.hra],
+                ['Conveyance Allowance', d.conveyance], ['Special Allowance', d.special],
+                ['Advance Statutory Bonus', d.bonus]
+            ];
+            if (d.otherEarnings) earnings.push(['Other Earnings', d.otherEarnings]);
+            const maxRows = Math.max(earnings.length, 3);
+            let earnRowsHTML = '';
+            earnings.forEach(e => { earnRowsHTML += `<tr><td>${e[0]}</td><td class="amount">${fmt(e[1])}</td></tr>`; });
+            for (let i = earnings.length; i < maxRows; i++) earnRowsHTML += '<tr class="empty-row"><td></td><td></td></tr>';
+
+            const deductions = [['Provident Fund-Employee Contribution', d.pf], ['TDS', d.tds]];
+            if (d.esi) deductions.push(['ESI', d.esi]);
+            if (d.otherDeductions) deductions.push(['Other Deductions', d.otherDeductions]);
+            let dedRowsHTML = '';
+            deductions.forEach(dd => { dedRowsHTML += `<tr><td>${dd[0]}</td><td class="amount">${fmt(dd[1])}</td></tr>`; });
+            for (let i = deductions.length; i < maxRows; i++) dedRowsHTML += '<tr class="empty-row"><td></td><td></td></tr>';
+
+            return `
+                <div class="payslip-paper" id="payslip-content">
+                    <div class="ps-header">
+                        <div class="ps-header-top">
+                            <img src="/assets/logo.png" alt="AK Robotic">
+                            <div class="ps-header-text">
+                                <h2>AK Robotic</h2>
+                                <p>Precision Automation & Industrial Solutions</p>
+                            </div>
+                        </div>
+                        <p style="font-weight:700; font-size:14px; color:#000;">Payslip for the month of ${mName} ${year}</p>
+                        <p class="ps-period">Financial Period ${fyStart}-${fyEnd}</p>
+                    </div>
+                    <p class="ps-confidential">Private & Confidential</p>
+
+                    <div class="ps-section-title">Associate Information</div>
+                    <div class="ps-emp-name">${(u.gender === 'Female' ? 'Ms. ' : 'Mr. ') + (u.name || '—')}</div>
+                    <table class="ps-info-table">
+                        <tr>
+                            <td class="label-cell">Associate Id</td><td class="value-cell">${u.empId || '—'}</td>
+                            <td class="label-cell">Location</td><td class="value-cell">${u.location || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Designation</td><td class="value-cell">${u.designation || '—'}</td>
+                            <td class="label-cell">PAN</td><td class="value-cell">${u.pan || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Gender</td><td class="value-cell">${u.gender || '—'}</td>
+                            <td class="label-cell">Bank A/C</td><td class="value-cell">${u.bankAccount || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Date Of Joining</td><td class="value-cell">${u.doj ? new Date(u.doj).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
+                            <td class="label-cell">ESI Number</td><td class="value-cell">${u.esiNumber || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">PF A/C</td><td class="value-cell">${u.pfAccount || '—'}</td>
+                            <td class="label-cell">Status</td><td class="value-cell">Salary Credited</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">UAN</td><td class="value-cell">${u.uan || '—'}</td>
+                            <td class="label-cell">Available Calendar Days</td><td class="value-cell" id="ps-cal-days">${d.calendarDays || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">SA Policy No</td><td class="value-cell">${u.saPolicy || '—'}</td>
+                            <td class="label-cell">Paid Days</td><td class="value-cell" id="ps-paid-days">${d.paidDays || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">SA LIC ID</td><td class="value-cell">${u.saLicId || '—'}</td>
+                            <td class="label-cell">Loss of Pay Days</td><td class="value-cell" id="ps-lop-days">${d.lopDays || '0'}</td>
+                        </tr>
+                    </table>
+
+                    <div class="ps-pay-grid">
+                        <table class="ps-pay-table">
+                            <thead><tr><th>Earnings</th><th style="width:100px;">Amount</th></tr></thead>
+                            <tbody id="ps-earnings-body">${earnRowsHTML}</tbody>
+                            <tfoot><tr class="total-row"><td><b>(A) Total Earnings</b></td><td class="amount" id="ps-total-earn"><b>${fmt(d.totalEarnings)}</b></td></tr></tfoot>
+                        </table>
+                        <table class="ps-pay-table">
+                            <thead><tr><th>Deductions</th><th style="width:100px;">Amount</th></tr></thead>
+                            <tbody id="ps-deductions-body">${dedRowsHTML}</tbody>
+                            <tfoot><tr class="total-row"><td><b>(B) Total Deduction</b></td><td class="amount" id="ps-total-ded"><b>${fmt(d.totalDeductions)}</b></td></tr></tfoot>
+                        </table>
+                    </div>
+
+                    <div class="ps-net-row">
+                        <table class="ps-net-table">
+                            <tr><td><b>Net Salary = (A) − (B)</b></td><td class="net-amount" id="ps-net"><b>${fmt(d.netSalary)}</b></td></tr>
+                        </table>
+                    </div>
+
+                    <div class="ps-footer">
+                        This is a system-generated payslip and does not require a signature. | AK Robotic © 2026
+                    </div>
+                </div>
+
+                <button class="btn-download" onclick="downloadPDF()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PDF Payslip
+                </button>
+            `;
+        }
+
+        // ===== FETCH PAYSLIP (MD VIEW) =====
+        window.fetchMdPayslip = async function() {
+            const empUid = document.getElementById('md-view-employee').value;
+            const month = document.getElementById('md-view-month').value;
+            const year = document.getElementById('md-view-year').value;
+            const container = document.getElementById('md-payslip-display');
+            if (!empUid) { showToast('Select an employee first.', 'error'); return; }
+
+            const userSnap = await getDoc(doc(db, 'users', empUid));
+            if (!userSnap.exists()) { showToast('Employee profile not found.', 'error'); return; }
+            const uData = userSnap.data();
+
+            const paySnap = await getDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`));
+            if (!paySnap.exists()) {
+                container.style.display = 'block';
+                container.innerHTML = `<div class="form-card" style="text-align:center; padding:40px; color:var(--text-muted);">
+                    <div style="font-size:40px; margin-bottom:12px;">📁</div>
+                    <h3 style="margin-bottom:8px; color:var(--primary);">No Payslip Found</h3>
+                    <p>No salary slip has been created for <b>${uData.name}</b> for <b>${MONTHS[parseInt(month)]} ${year}</b>.</p>
+                </div>`;
+                return;
+            }
+
+            const pData = paySnap.data();
+            currentUserData = uData; // Context for downloadPDF
+            container.style.display = 'block';
+            container.innerHTML = generatePayslipHTML(uData, pData, month, year);
+            showToast('Payslip loaded!');
+        };
+
+        // ===== PREVIEW FORM PAYSLIP (MD ENTER FORM) =====
+        window.previewFormPayslip = async function() {
+            const empUid = document.getElementById('pr-employee').value;
+            const month = document.getElementById('pr-month').value;
+            const year = document.getElementById('pr-year').value;
+            const container = document.getElementById('form-preview-display');
+            if (!empUid) { showToast('Select an employee first.', 'error'); return; }
+            const empObj = allEmployees.find(e => e.uid === empUid);
+            if (!empObj) { showToast('Employee details not found.', 'error'); return; }
+
+            const pData = {
+                basic: Number(document.getElementById('pr-basic').value)||0,
+                hra: Number(document.getElementById('pr-hra').value)||0,
+                conveyance: Number(document.getElementById('pr-conveyance').value)||0,
+                special: Number(document.getElementById('pr-special').value)||0,
+                bonus: Number(document.getElementById('pr-bonus').value)||0,
+                otherEarnings: Number(document.getElementById('pr-other-earn').value)||0,
+                pf: Number(document.getElementById('pr-pf').value)||0,
+                tds: Number(document.getElementById('pr-tds').value)||0,
+                esi: Number(document.getElementById('pr-esi').value)||0,
+                otherDeductions: Number(document.getElementById('pr-other-ded').value)||0,
+                calendarDays: Number(document.getElementById('pr-cal-days').value)||0,
+                paidDays: Number(document.getElementById('pr-paid-days').value)||0,
+                lopDays: Number(document.getElementById('pr-lop-days').value)||0,
+            };
+            pData.totalEarnings = pData.basic + pData.hra + pData.conveyance + pData.special + pData.bonus + pData.otherEarnings;
+            pData.totalDeductions = pData.pf + pData.tds + pData.esi + pData.otherDeductions;
+            pData.netSalary = pData.totalEarnings - pData.totalDeductions;
+
+            currentUserData = empObj;
+            container.style.display = 'block';
+            container.innerHTML = generatePayslipHTML(empObj, pData, month, year);
+            container.scrollIntoView({ behavior: 'smooth' });
+            showToast('Preview loaded!');
+        };
+
         // ===== FETCH PAYSLIP (EMPLOYEE VIEW) =====
         window.fetchEmpPayslip = async function() {
             const month = document.getElementById('emp-month').value;
@@ -941,60 +1176,7 @@
             if (!snap.exists()) { showToast('No payslip found for this month.', 'error'); return; }
             const d = snap.data();
             const u = currentUserData || {};
-            const mName = MONTHS[parseInt(month)];
-
-            // Determine financial year
-            const yr = parseInt(year);
-            const mo = parseInt(month);
-            const fyStart = mo >= 4 ? yr : yr - 1;
-            const fyEnd = fyStart + 1;
-
-            document.getElementById('ps-title-line').textContent = `Payslip for the month of ${mName} ${year}`;
-            document.getElementById('ps-fin-period').textContent = `Financial Period ${fyStart}-${fyEnd}`;
-            document.getElementById('ps-emp-fullname').textContent = (u.gender === 'Female' ? 'Ms. ' : 'Mr. ') + (u.name || '—');
-            document.getElementById('ps-empid').textContent = u.empId || '—';
-            document.getElementById('ps-desg').textContent = u.designation || '—';
-            document.getElementById('ps-gender').textContent = u.gender || '—';
-            document.getElementById('ps-doj').textContent = u.doj ? new Date(u.doj).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '—';
-            document.getElementById('ps-pfac').textContent = u.pfAccount || '—';
-            document.getElementById('ps-uan').textContent = u.uan || '—';
-            document.getElementById('ps-sa-policy').textContent = u.saPolicy || '—';
-            document.getElementById('ps-sa-lic').textContent = u.saLicId || '—';
-            document.getElementById('ps-location').textContent = u.location || '—';
-            document.getElementById('ps-pan').textContent = u.pan || '—';
-            document.getElementById('ps-bank').textContent = u.bankAccount || '—';
-            document.getElementById('ps-esi-num').textContent = u.esiNumber || '—';
-            document.getElementById('ps-status').textContent = 'Salary Credited';
-            document.getElementById('ps-cal-days').textContent = d.calendarDays || '—';
-            document.getElementById('ps-paid-days').textContent = d.paidDays || '—';
-            document.getElementById('ps-lop-days').textContent = d.lopDays || '0';
-
-            // Earnings
-            const earnings = [
-                ['Basic', d.basic], ['House Rent Allowance', d.hra],
-                ['Conveyance Allowance', d.conveyance], ['Special Allowance', d.special],
-                ['Advance Statutory Bonus', d.bonus]
-            ];
-            if (d.otherEarnings) earnings.push(['Other Earnings', d.otherEarnings]);
-            const earnBody = document.getElementById('ps-earnings-body');
-            earnBody.innerHTML = '';
-            earnings.forEach(e => { earnBody.innerHTML += `<tr><td>${e[0]}</td><td class="amount">${fmt(e[1])}</td></tr>`; });
-            // Add empty rows to match deductions height
-            const maxRows = Math.max(earnings.length, 3);
-            for (let i = earnings.length; i < maxRows; i++) earnBody.innerHTML += '<tr class="empty-row"><td></td><td></td></tr>';
-            document.getElementById('ps-total-earn').innerHTML = `<b>${fmt(d.totalEarnings)}</b>`;
-
-            // Deductions
-            const deductions = [['Provident Fund-Employee Contribution', d.pf], ['TDS', d.tds]];
-            if (d.esi) deductions.push(['ESI', d.esi]);
-            if (d.otherDeductions) deductions.push(['Other Deductions', d.otherDeductions]);
-            const dedBody = document.getElementById('ps-deductions-body');
-            dedBody.innerHTML = '';
-            deductions.forEach(dd => { dedBody.innerHTML += `<tr><td>${dd[0]}</td><td class="amount">${fmt(dd[1])}</td></tr>`; });
-            for (let i = deductions.length; i < maxRows; i++) dedBody.innerHTML += '<tr class="empty-row"><td></td><td></td></tr>';
-            document.getElementById('ps-total-ded').innerHTML = `<b>${fmt(d.totalDeductions)}</b>`;
-
-            document.getElementById('ps-net').innerHTML = `<b>${fmt(d.netSalary)}</b>`;
+            view.innerHTML = generatePayslipHTML(u, d, month, year);
             view.style.display = 'block';
         };
 
