@@ -956,42 +956,49 @@
             const w = 210, margin = 15, cw = w - 2*margin;
             let y = margin;
 
-            // White background
+            // Ensure clean white page
             pdf.setFillColor(255,255,255);
             pdf.rect(0,0,210,297,'F');
+            pdf.setDrawColor(0);
+            pdf.setLineWidth(0.3);
 
             // Header
-            pdf.setFontSize(14); pdf.setFont('helvetica','bold'); pdf.setTextColor(0);
+            pdf.setFontSize(14); pdf.setFont('helvetica','bold'); pdf.setTextColor(0,0,0);
             pdf.text('AK Robotic', w/2, y+6, {align:'center'});
-            pdf.setFontSize(10); pdf.setFont('helvetica','normal');
+            pdf.setFontSize(10); pdf.setFont('helvetica','normal'); pdf.setTextColor(0,0,0);
             pdf.text('Precision Automation & Industrial Solutions', w/2, y+12, {align:'center'});
             y += 16;
-            pdf.setFontSize(11); pdf.setFont('helvetica','bold');
+            pdf.setFontSize(11); pdf.setFont('helvetica','bold'); pdf.setTextColor(0,0,0);
             pdf.text(`Payslip for the month of ${mName} ${year}`, w/2, y, {align:'center'});
             y += 5;
-            pdf.setFontSize(9); pdf.setFont('helvetica','normal');
+            pdf.setFontSize(9); pdf.setFont('helvetica','normal'); pdf.setTextColor(0,0,0);
             pdf.text(`Financial Period ${fyStart}-${fyStart+1}`, w/2, y, {align:'center'});
             y += 3;
-            pdf.setDrawColor(0); pdf.setLineWidth(0.5);
+            pdf.setDrawColor(0,0,0); pdf.setLineWidth(0.5);
             pdf.line(margin, y, w-margin, y);
             y += 3;
 
             // Private & Confidential
-            pdf.setFontSize(8); pdf.setFont('helvetica','italic'); pdf.setTextColor(100);
+            pdf.setFontSize(8); pdf.setFont('helvetica','italic'); pdf.setTextColor(100,100,100);
             pdf.text('Private & Confidential', w-margin, y, {align:'right'});
             y += 5;
 
+            // Helper: draw a filled rect with explicit colors
+            function drawCell(x, yPos, cellW, cellH, fillR, fillG, fillB) {
+                pdf.setFillColor(fillR, fillG, fillB);
+                pdf.setDrawColor(120,120,120);
+                pdf.rect(x, yPos, cellW, cellH, 'FD');
+            }
+
             // Associate Information header
-            pdf.setFillColor(220,220,220); pdf.setTextColor(0);
-            pdf.rect(margin, y, cw, 7, 'F');
-            pdf.setFontSize(10); pdf.setFont('helvetica','bold');
+            drawCell(margin, y, cw, 7, 220, 220, 220);
+            pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(0,0,0);
             pdf.text('Associate Information', w/2, y+5, {align:'center'});
             y += 7;
 
-            // Employee name
-            pdf.setDrawColor(100);
-            pdf.rect(margin, y, cw, 7);
-            pdf.setFontSize(11); pdf.setFont('helvetica','bold'); pdf.setTextColor(0);
+            // Employee name row
+            drawCell(margin, y, cw, 7, 255, 255, 255);
+            pdf.setFontSize(11); pdf.setFont('helvetica','bold'); pdf.setTextColor(0,0,0);
             pdf.text((u.gender === 'Female' ? 'Ms. ' : 'Mr. ') + (u.name||'—'), margin+3, y+5);
             y += 7;
 
@@ -1011,20 +1018,23 @@
             infoRows.forEach(row => {
                 let x = margin;
                 row.forEach((cell, i) => {
-                    pdf.rect(x, y, colW[i], 7);
-                    if (i%2 === 0) { pdf.setFont('helvetica','bold'); pdf.setFillColor(248,248,248); pdf.rect(x,y,colW[i],7,'F'); pdf.rect(x,y,colW[i],7,'S'); }
-                    else { pdf.setFont('helvetica','normal'); }
-                    pdf.setTextColor(0);
+                    if (i % 2 === 0) {
+                        drawCell(x, y, colW[i], 7, 245, 245, 245);
+                        pdf.setFont('helvetica','bold');
+                    } else {
+                        drawCell(x, y, colW[i], 7, 255, 255, 255);
+                        pdf.setFont('helvetica','normal');
+                    }
+                    pdf.setTextColor(0,0,0);
                     pdf.text(String(cell), x+2, y+5);
                     x += colW[i];
                 });
                 y += 7;
             });
-            y += 5;
+            y += 8;
 
-            // Earnings & Deductions side by side
+            // ===== Earnings & Deductions side by side =====
             const halfW = cw / 2;
-            const earnData = [['Basic', document.getElementById('ps-earnings-body')]];
 
             // Get earnings from DOM
             const earnRows = [];
@@ -1040,61 +1050,68 @@
             const maxR = Math.max(earnRows.length, dedRows.length, 5);
 
             // Earnings header
-            pdf.setFillColor(220,220,220);
-            pdf.rect(margin, y, halfW*0.7, 7, 'FD'); pdf.rect(margin+halfW*0.7, y, halfW*0.3, 7, 'FD');
-            pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(0);
+            drawCell(margin, y, halfW*0.7, 7, 220, 220, 220);
+            drawCell(margin + halfW*0.7, y, halfW*0.3, 7, 220, 220, 220);
+            pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(0,0,0);
             pdf.text('Earnings', margin + halfW*0.35, y+5, {align:'center'});
             pdf.text('Amount', margin + halfW*0.85, y+5, {align:'center'});
 
             // Deductions header
-            pdf.rect(margin+halfW, y, halfW*0.7, 7, 'FD'); pdf.rect(margin+halfW+halfW*0.7, y, halfW*0.3, 7, 'FD');
-            pdf.text('Deductions', margin+halfW + halfW*0.35, y+5, {align:'center'});
-            pdf.text('Amount', margin+halfW + halfW*0.85, y+5, {align:'center'});
+            drawCell(margin + halfW, y, halfW*0.7, 7, 220, 220, 220);
+            drawCell(margin + halfW + halfW*0.7, y, halfW*0.3, 7, 220, 220, 220);
+            pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(0,0,0);
+            pdf.text('Deductions', margin + halfW + halfW*0.35, y+5, {align:'center'});
+            pdf.text('Amount', margin + halfW + halfW*0.85, y+5, {align:'center'});
             y += 7;
 
-            // Rows
+            // Data rows
             pdf.setFontSize(8);
             for (let i = 0; i < maxR; i++) {
-                // Earning
-                pdf.rect(margin, y, halfW*0.7, 7); pdf.rect(margin+halfW*0.7, y, halfW*0.3, 7);
+                // Earnings cells
+                drawCell(margin, y, halfW*0.7, 7, 255, 255, 255);
+                drawCell(margin + halfW*0.7, y, halfW*0.3, 7, 255, 255, 255);
                 if (earnRows[i]) {
-                    pdf.setFont('helvetica','normal');
+                    pdf.setFont('helvetica','normal'); pdf.setTextColor(0,0,0);
                     pdf.text(earnRows[i][0], margin+2, y+5);
                     pdf.text(earnRows[i][1], margin+halfW-2, y+5, {align:'right'});
                 }
-                // Deduction
-                pdf.rect(margin+halfW, y, halfW*0.7, 7); pdf.rect(margin+halfW+halfW*0.7, y, halfW*0.3, 7);
+
+                // Deductions cells
+                drawCell(margin + halfW, y, halfW*0.7, 7, 255, 255, 255);
+                drawCell(margin + halfW + halfW*0.7, y, halfW*0.3, 7, 255, 255, 255);
                 if (dedRows[i]) {
-                    pdf.setFont('helvetica','normal');
+                    pdf.setFont('helvetica','normal'); pdf.setTextColor(0,0,0);
                     pdf.text(dedRows[i][0], margin+halfW+2, y+5);
                     pdf.text(dedRows[i][1], margin+cw-2, y+5, {align:'right'});
                 }
                 y += 7;
             }
 
-            // Totals
-            pdf.setFillColor(240,240,240);
-            pdf.rect(margin, y, halfW*0.7, 7, 'FD'); pdf.rect(margin+halfW*0.7, y, halfW*0.3, 7, 'FD');
-            pdf.rect(margin+halfW, y, halfW*0.7, 7, 'FD'); pdf.rect(margin+halfW+halfW*0.7, y, halfW*0.3, 7, 'FD');
-            pdf.setFont('helvetica','bold'); pdf.setFontSize(9);
+            // Totals row
+            drawCell(margin, y, halfW*0.7, 7, 240, 240, 240);
+            drawCell(margin + halfW*0.7, y, halfW*0.3, 7, 240, 240, 240);
+            drawCell(margin + halfW, y, halfW*0.7, 7, 240, 240, 240);
+            drawCell(margin + halfW + halfW*0.7, y, halfW*0.3, 7, 240, 240, 240);
+            pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(0,0,0);
             pdf.text('(A) Total Earnings', margin+2, y+5);
             pdf.text(document.getElementById('ps-total-earn').textContent, margin+halfW-2, y+5, {align:'right'});
             pdf.text('(B) Total Deduction', margin+halfW+2, y+5);
             pdf.text(document.getElementById('ps-total-ded').textContent, margin+cw-2, y+5, {align:'right'});
-            y += 12;
+            y += 14;
 
             // Net Salary
-            const netW = 120;
+            const netW = 130;
             const netX = (w - netW) / 2;
-            pdf.rect(netX, y, netW*0.7, 9); pdf.rect(netX+netW*0.7, y, netW*0.3, 9);
-            pdf.setFont('helvetica','bold'); pdf.setFontSize(11);
-            pdf.text('Net Salary = (A) - (B)', netX+4, y+6.5);
-            pdf.text(document.getElementById('ps-net').textContent, netX+netW-4, y+6.5, {align:'right'});
-            y += 16;
+            drawCell(netX, y, netW*0.7, 10, 255, 255, 255);
+            drawCell(netX + netW*0.7, y, netW*0.3, 10, 255, 255, 255);
+            pdf.setFont('helvetica','bold'); pdf.setFontSize(12); pdf.setTextColor(0,0,0);
+            pdf.text('Net Salary = (A) - (B)', netX+4, y+7);
+            pdf.text(document.getElementById('ps-net').textContent, netX+netW-4, y+7, {align:'right'});
+            y += 18;
 
             // Footer
-            pdf.setDrawColor(180); pdf.line(margin, y, w-margin, y);
-            pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(130);
+            pdf.setDrawColor(180,180,180); pdf.line(margin, y, w-margin, y);
+            pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(130,130,130);
             pdf.text('This is a system-generated payslip and does not require a signature.', w/2, y+5, {align:'center'});
             pdf.text(`Generated on ${new Date().toLocaleDateString('en-IN')} | AK Robotic`, w/2, y+9, {align:'center'});
 
