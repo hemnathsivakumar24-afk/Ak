@@ -891,6 +891,13 @@
             document.getElementById('pr-net-display').textContent = '₹ ' + fmt(totalEarn - totalDed);
         }
 
+        // ===== PAYROLL OVERWRITE GUARD =====
+        let loadedEditKey = null;
+
+        document.getElementById('pr-employee')?.addEventListener('change', () => { loadedEditKey = null; });
+        document.getElementById('pr-month')?.addEventListener('change', () => { loadedEditKey = null; });
+        document.getElementById('pr-year')?.addEventListener('change', () => { loadedEditKey = null; });
+
         // ===== SAVE PAYROLL =====
         window.savePayroll = async function() {
             const empUid = document.getElementById('pr-employee').value;
@@ -898,6 +905,22 @@
             const year = document.getElementById('pr-year').value;
             const btn = document.getElementById('save-payroll-btn');
             if (!empUid) { showToast('Please select an employee.', 'error'); return; }
+
+            const currentKey = `${empUid}_${year}_${month}`;
+            const empObj = allEmployees.find(e => e.uid === empUid);
+            const empName = empObj ? empObj.name : 'this employee';
+            const mName = MONTHS[parseInt(month)];
+
+            // Overwrite check: check if payslip doc already exists
+            const docRef = doc(db, 'payroll', empUid, 'months', `${year}-${month}`);
+            const existingSnap = await getDoc(docRef);
+
+            if (existingSnap.exists() && loadedEditKey !== currentKey) {
+                showToast(`⚠️ Payslip for ${empName} (${mName} ${year}) already exists!`, 'error');
+                alert(`⚠️ OVERWRITE PROTECTION:\n\nA payslip already exists for ${empName} for ${mName} ${year}!\n\nTo prevent accidental overwrites:\n1. Click 'Load Existing' to view/edit the current payslip.\n2. Or click 'Delete Payslip 🗑️' to clear it first.`);
+                return;
+            }
+
             btn.innerHTML = '<span class="spinner"></span> Saving...'; btn.disabled = true;
             const data = {
                 basic: Number(document.getElementById('pr-basic').value)||0,
@@ -918,8 +941,14 @@
             data.totalEarnings = data.basic + data.hra + data.conveyance + data.special + data.bonus + data.otherEarnings;
             data.totalDeductions = data.pf + data.tds + data.esi + data.otherDeductions;
             data.netSalary = data.totalEarnings - data.totalDeductions;
-            try { await setDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`), data); showToast('Payslip saved!'); }
-            catch(e) { showToast('Error: ' + e.message, 'error'); }
+
+            try {
+                await setDoc(docRef, data);
+                loadedEditKey = currentKey;
+                showToast(`Payslip saved for ${empName} (${mName} ${year})!`);
+            } catch(e) {
+                showToast('Error: ' + e.message, 'error');
+            }
             btn.innerHTML = 'Save Payslip ✓'; btn.disabled = false;
         };
 
@@ -944,11 +973,13 @@
             document.getElementById('pr-cal-days').value = d.calendarDays||0;
             document.getElementById('pr-paid-days').value = d.paidDays||0;
             document.getElementById('pr-lop-days').value = d.lopDays||0;
+            loadedEditKey = `${empUid}_${year}_${month}`;
             calcNet();
-            showToast('Payslip loaded!');
+            showToast('Payslip loaded for editing!');
         };
 
         window.clearPayrollForm = function() {
+            loadedEditKey = null;
             ['pr-basic','pr-hra','pr-conveyance','pr-special','pr-bonus','pr-other-earn','pr-pf','pr-tds','pr-esi','pr-other-ded','pr-cal-days','pr-paid-days','pr-lop-days'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.value = '';
@@ -968,6 +999,7 @@
             if (confirm(`Delete payslip for ${empName} for ${mName} ${year}? You can re-enter details afterwards.`)) {
                 try {
                     await deleteDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`));
+                    loadedEditKey = null;
                     clearPayrollForm();
                     showToast(`Payslip for ${mName} ${year} deleted successfully.`);
                 } catch(e) {
