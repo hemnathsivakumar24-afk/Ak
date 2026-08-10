@@ -192,6 +192,12 @@
             cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
         }
         .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger {
+            background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626;
+            padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 500;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .btn-danger:hover { background: #FEE2E2; }
         .btn-row { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
 
         /* ===== EMPLOYEE DASHBOARD ===== */
@@ -466,6 +472,8 @@
                         <div class="btn-row">
                             <button class="btn-primary" onclick="savePayroll()" id="save-payroll-btn">Save Payslip ✓</button>
                             <button class="btn-secondary" onclick="loadExistingPayroll()">Load Existing</button>
+                            <button class="btn-secondary" onclick="clearPayrollForm()" style="color:#6B7280;">Clear Form</button>
+                            <button class="btn-danger" onclick="deletePayroll()" id="delete-payroll-btn">Delete Payslip 🗑️</button>
                         </div>
                     </div>
                 </div>
@@ -646,7 +654,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC1Ir5luEjH-Su8FKc_H-UfDVVAzqBjyvs",
@@ -739,13 +747,33 @@
                 allEmployees.push({uid: d.id, ...data});
                 const card = document.createElement('div');
                 card.className = 'emp-card';
-                card.innerHTML = `<div class="emp-avatar">${(data.name||'?')[0].toUpperCase()}</div><div class="emp-name">${data.name||'—'}</div><div class="emp-id">ID: ${data.empId||'—'}</div><div class="emp-desg">${data.designation||'—'}</div>`;
+                card.style.position = 'relative';
+                const safeName = (data.name||'Employee').replace(/'/g, "\\'");
+                card.innerHTML = `
+                    <button onclick="event.stopPropagation(); deleteEmployee('${d.id}', '${safeName}')" title="Delete Employee" style="position:absolute; top:16px; right:16px; background:#FEF2F2; border:1px solid #FECACA; color:#DC2626; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.2s;">🗑️ Delete</button>
+                    <div class="emp-avatar">${(data.name||'?')[0].toUpperCase()}</div>
+                    <div class="emp-name">${data.name||'—'}</div>
+                    <div class="emp-id">ID: ${data.empId||'—'}</div>
+                    <div class="emp-desg">${data.designation||'—'}</div>
+                `;
                 grid.appendChild(card);
                 const opt = document.createElement('option');
                 opt.value = d.id; opt.textContent = `${data.name} (${data.empId})`;
                 sel.appendChild(opt);
             });
         }
+
+        window.deleteEmployee = async function(uid, name) {
+            if (confirm(`Are you sure you want to delete employee "${name}"? This action cannot be undone.`)) {
+                try {
+                    await deleteDoc(doc(db, 'users', uid));
+                    showToast(`Employee ${name} deleted successfully.`);
+                    await loadEmployees();
+                } catch(e) {
+                    showToast('Error deleting employee: ' + e.message, 'error');
+                }
+            }
+        };
 
         window.openAddEmpModal = () => document.getElementById('add-emp-modal').classList.add('open');
         window.closeModal = () => document.getElementById('add-emp-modal').classList.remove('open');
@@ -860,6 +888,34 @@
             document.getElementById('pr-lop-days').value = d.lopDays||0;
             calcNet();
             showToast('Payslip loaded!');
+        };
+
+        window.clearPayrollForm = function() {
+            ['pr-basic','pr-hra','pr-conveyance','pr-special','pr-bonus','pr-other-earn','pr-pf','pr-tds','pr-esi','pr-other-ded','pr-cal-days','pr-paid-days','pr-lop-days'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
+            calcNet();
+        };
+
+        window.deletePayroll = async function() {
+            const empUid = document.getElementById('pr-employee').value;
+            const month = document.getElementById('pr-month').value;
+            const year = document.getElementById('pr-year').value;
+            if (!empUid) { showToast('Select an employee first.', 'error'); return; }
+            const empObj = allEmployees.find(e => e.uid === empUid);
+            const empName = empObj ? empObj.name : 'this employee';
+            const mName = MONTHS[parseInt(month)];
+
+            if (confirm(`Delete payslip for ${empName} for ${mName} ${year}? You can re-enter details afterwards.`)) {
+                try {
+                    await deleteDoc(doc(db, 'payroll', empUid, 'months', `${year}-${month}`));
+                    clearPayrollForm();
+                    showToast(`Payslip for ${mName} ${year} deleted successfully.`);
+                } catch(e) {
+                    showToast('Error deleting payslip: ' + e.message, 'error');
+                }
+            }
         };
 
         // ===== EMPLOYEE PROFILE =====
